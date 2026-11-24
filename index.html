@@ -4,115 +4,168 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Amazon México – Propuesta de rediseño</title>
-<style>:root{color-scheme:light}html{-webkit-text-size-adjust:100%}body{margin:0}[hidden]{display:none!important}</style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: ficha de producto en tres columnas (galería · información · caja de compra); una columna en móvil.
-   Tokens: navy (encabezado), amarillo (CTA), verde (vendedor), azul/naranja/verde = problemas P1/P2/P3 */
+/* Layout: sitio de varias pantallas (inicio, resultados, ficha, carrito, pago, pedidos, ayuda, catálogo de mejoras).
+   Insignias de mejora por origen: azul = documentos del equipo, verde azulado = derivada de los documentos, violeta = adicional */
+:root{color-scheme:light}
 :root{
   --bg:#ffffff; --surface:#ffffff; --soft:#f6f7f7; --ink:#0f1111; --muted:#565959; --line:#d5d9d9;
-  --nav:#131921; --nav2:#232f3e; --nav-ink:#ffffff; --nav-muted:#cfd3d3;
-  --link:#007185; --cta:#ffd814; --cta-ink:#0f1111; --ok:#067d62;
-  --seller-bg:#f0fdf4; --seller-line:#bbe5cc;
-  --p1:#2563eb; --p2:#ea580c; --p3:#16a34a;
+  --nav:#131921; --nav2:#232f3e; --nav-muted:#cfd3d3;
+  --link:#007185; --cta:#ffd814; --cta-ink:#0f1111; --ok:#067d62; --warn:#b45309; --bad:#b12704;
+  --seller-bg:#f0fdf4; --seller-line:#bbe5cc; --ext-bg:#fff7ed; --ext-line:#fdba74;
+  --o1:#2563eb; --o2:#0d9488; --o3:#7c3aed;
   --overlay:rgba(15,17,17,.55); --focus:#2563eb;
   --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0f1417; --surface:#161d21; --soft:#1c262b; --ink:#eef1f1; --muted:#a9b3b5; --line:#33414a;
-  --nav:#0a0f12; --nav2:#141c21; --link:#5fc3d6; --cta:#ffd814; --cta-ink:#0f1111; --ok:#4fd1ae;
-  --seller-bg:#12261c; --seller-line:#2c5a42; --p1:#6b9bff; --p2:#ff8a4c; --p3:#4ade80; --overlay:rgba(0,0,0,.7); --focus:#8ab4ff; color-scheme:dark}}
+  --nav:#0a0f12; --nav2:#141c21; --link:#5fc3d6; --ok:#4fd1ae; --warn:#fbbf24; --bad:#ff8a7a;
+  --seller-bg:#12261c; --seller-line:#2c5a42; --ext-bg:#2a1d10; --ext-line:#7c4a1d;
+  --o1:#6b9bff; --o2:#2dd4bf; --o3:#a78bfa; --overlay:rgba(0,0,0,.7); --focus:#8ab4ff; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0f1417; --surface:#161d21; --soft:#1c262b; --ink:#eef1f1; --muted:#a9b3b5; --line:#33414a;
-  --nav:#0a0f12; --nav2:#141c21; --link:#5fc3d6; --cta:#ffd814; --cta-ink:#0f1111; --ok:#4fd1ae;
-  --seller-bg:#12261c; --seller-line:#2c5a42; --p1:#6b9bff; --p2:#ff8a4c; --p3:#4ade80; --overlay:rgba(0,0,0,.7); --focus:#8ab4ff; color-scheme:dark}
+  --nav:#0a0f12; --nav2:#141c21; --link:#5fc3d6; --ok:#4fd1ae; --warn:#fbbf24; --bad:#ff8a7a;
+  --seller-bg:#12261c; --seller-line:#2c5a42; --ext-bg:#2a1d10; --ext-line:#7c4a1d;
+  --o1:#6b9bff; --o2:#2dd4bf; --o3:#a78bfa; --overlay:rgba(0,0,0,.7); --focus:#8ab4ff; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+html{-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .wrap{max-width:1320px;margin:0 auto}
 button{font:inherit;color:inherit;cursor:pointer}
-a,.link{color:var(--link);text-decoration:none;cursor:pointer;background:none;border:0;padding:0;font:inherit}
+a,.link{color:var(--link);text-decoration:none;cursor:pointer;background:none;border:0;padding:0;font:inherit;text-align:left}
 .link:hover,a:hover{text-decoration:underline}
-:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
 .bleed{margin-left:calc(-1*max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1*max(16px,env(safe-area-inset-right,0px)));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.skip{position:absolute;left:-9999px;top:8px;background:var(--cta);color:#0f1111;padding:8px 14px;border-radius:6px;z-index:100;font-weight:600;border:0}
+.skip:focus{left:16px}
 /* Encabezado */
-.top{background:var(--nav);color:var(--nav-ink)}
-.top .wrap{display:flex;align-items:center;gap:20px;padding:12px 0;flex-wrap:wrap}
-.brand{font-size:22px;font-weight:700;letter-spacing:-.01em;color:var(--nav-ink)}
+.top{background:var(--nav);color:#fff}
+.top .wrap{display:flex;align-items:center;gap:18px;padding:12px 0;flex-wrap:wrap}
+.brand{font-size:22px;font-weight:700;letter-spacing:-.01em;color:#fff;background:none;border:0;padding:0}
 .loc{font-size:12px;color:var(--nav-muted);line-height:1.2}.loc b{display:block;color:#fff;font-size:14px;font-weight:600}
-.search{flex:1 1 280px;display:flex;background:#fff;border-radius:6px;overflow:hidden;min-width:0}
-.search input{flex:1;min-width:0;border:0;padding:0 14px;height:40px;font:inherit;color:#0f1111;background:#fff}
-.search button{background:#ffa41c;border:0;padding:0 20px;font-weight:600;color:#0f1111}
+.search{flex:1 1 280px;display:flex;background:#fff;border-radius:6px;min-width:0;position:relative}
+.search input{flex:1;min-width:0;border:0;padding:0 14px;height:40px;font:inherit;color:#0f1111;background:#fff;border-radius:6px 0 0 6px}
+.search button{background:#ffa41c;border:0;padding:0 20px;font-weight:600;color:#0f1111;border-radius:0 6px 6px 0}
 .hbtn{background:none;border:0;color:#fff;text-align:left;line-height:1.2;font-size:12px;position:relative}
-.hbtn b{display:block;font-size:14px;font-weight:600}
-.hbtn small{color:var(--nav-muted);font-size:12px}
+.hbtn b{display:block;font-size:14px;font-weight:600}.hbtn small{color:var(--nav-muted);font-size:12px}
 .cartbtn{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px}
 .cartbtn .n{background:var(--cta);color:#0f1111;border-radius:999px;min-width:22px;height:22px;display:grid;place-items:center;font-size:12px;padding:0 6px}
-.menu{position:absolute;right:0;top:calc(100% + 8px);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;min-width:240px;padding:8px;z-index:30;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.menu{position:absolute;right:0;top:calc(100% + 8px);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;min-width:250px;padding:8px;z-index:30;box-shadow:0 8px 24px rgba(0,0,0,.2)}
 .menu button{display:block;width:100%;text-align:left;background:none;border:0;padding:10px;border-radius:6px;font-size:14px;color:var(--ink)}
 .menu button:hover:not(:disabled){background:var(--soft)}.menu button:disabled{color:var(--muted);cursor:default}
 .sub{background:var(--nav2);color:#fff}
-.sub .wrap{display:flex;gap:22px;padding:8px 0;overflow-x:auto;white-space:nowrap}
-.sub button{background:none;border:0;color:#fff;font-size:14px;padding:2px 0}
-.crumbs{font-size:12px;color:var(--muted);padding:12px 0 4px}
+.sub .wrap{display:flex;gap:22px;padding:8px 0;overflow-x:auto;white-space:nowrap;align-items:center}
+.sub button{background:none;border:0;color:#fff;font-size:14px;padding:2px 0;font-weight:500}
+.sub button.all{font-weight:700}
 /* Barra de mejoras */
 .mejoras{border-bottom:1px solid var(--line);background:var(--soft)}
 .mejoras .wrap{display:flex;align-items:center;gap:14px;padding:10px 0;flex-wrap:wrap}
-.sw{display:flex;align-items:center;gap:10px;font-weight:600}
+.sw{display:flex;align-items:center;gap:10px;font-weight:600;cursor:pointer}
 .sw input{position:absolute;opacity:0}
-.sw .track{width:40px;height:22px;border-radius:999px;background:var(--line);position:relative;transition:background .15s}
+.sw .track{width:40px;height:22px;border-radius:999px;background:var(--muted);position:relative;transition:background .15s}
 .sw .track::after{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}
 .sw input:checked+.track{background:var(--ok)}.sw input:checked+.track::after{transform:translateX(18px)}
-.sw input:focus-visible+.track{outline:2px solid var(--focus);outline-offset:2px}
+.sw input:focus-visible+.track{outline:3px solid var(--focus);outline-offset:2px}
 .mejoras .note{color:var(--muted);font-size:13px}
-.legend{display:none;gap:12px;padding:0 0 12px;grid-template-columns:repeat(3,1fr)}
-body.show .legend{display:grid}
-.legend div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;font-size:13px}
-.legend b{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:14px}
-.badge{display:none;width:26px;height:26px;border-radius:50%;color:#fff;font-weight:700;font-size:13px;place-items:center;border:2px solid var(--surface);flex:none}
-body.show .badge{display:inline-grid}
-.b1{background:var(--p1)}.b2{background:var(--p2)}.b3{background:var(--p3)}
-body.show .hl1,body.show .hl2,body.show .hl3{outline:2px dashed;outline-offset:4px;border-radius:10px}
-body.show .hl1{outline-color:var(--p1)}body.show .hl2{outline-color:var(--p2)}body.show .hl3{outline-color:var(--p3)}
-/* Ficha */
-.product{display:grid;grid-template-columns:minmax(0,520px) minmax(0,1fr) 360px;gap:32px;padding:12px 0 32px;align-items:start}
-.gal .main{background:var(--soft);border-radius:8px;aspect-ratio:13/12;display:grid;place-items:center;overflow:hidden}
-.gal svg{width:70%;height:auto;max-width:100%}
-.thumbs{display:flex;gap:12px;margin-top:12px}
-.thumbs button{width:80px;height:80px;border-radius:6px;background:var(--soft);border:1px solid var(--line);display:grid;place-items:center;padding:6px}
-.thumbs button[aria-pressed="true"]{border:2px solid var(--ink)}
-.thumbs svg{width:100%}
+.key{display:none;gap:14px;font-size:12px;flex-wrap:wrap}
+body.show .key{display:flex}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.d-doc{background:var(--o1)}.d-der{background:var(--o2)}.d-adi{background:var(--o3)}
+[data-imp]{position:relative}
+.ibadge{display:none;position:absolute;top:-12px;left:-12px;z-index:5;min-width:26px;height:26px;border-radius:13px;color:#fff;font-weight:700;font-size:12px;border:2px solid var(--surface);padding:0 6px;line-height:1;align-items:center;justify-content:center}
+body.show .ibadge{display:inline-flex}
+body.show [data-imp]{outline:2px dashed var(--o1);outline-offset:4px;border-radius:8px}
+body.show [data-imp][data-o="der"]{outline-color:var(--o2)}body.show [data-imp][data-o="adi"]{outline-color:var(--o3)}
+.ibadge[data-o="doc"]{background:var(--o1)}.ibadge[data-o="der"]{background:var(--o2)}.ibadge[data-o="adi"]{background:var(--o3)}
+/* Comunes */
+main{padding-bottom:40px;outline:none}
+.crumbs{font-size:12px;color:var(--muted);padding:12px 0 4px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 h1{font-size:24px;line-height:1.3;font-weight:600;margin:0 0 8px}
-.rate{color:var(--link);margin:0 0 10px}.rate .st{color:#f59e0b;letter-spacing:1px}
-.price{font-size:32px;font-weight:600;margin:12px 0 4px;font-variant-numeric:tabular-nums}
-.info h2{font-size:16px;margin:18px 0 6px}
-.info ul{margin:0;padding-left:20px;display:grid;gap:4px}
+h2{font-size:18px;margin:0 0 8px}
 hr{border:0;border-top:1px solid var(--line);margin:12px 0}
-/* Caja de compra */
-.buy{border:1px solid var(--line);border-radius:8px;padding:20px;display:grid;gap:14px;background:var(--surface);position:sticky;top:12px}
-.buy .p{font-size:28px;font-weight:600;font-variant-numeric:tabular-nums}
-.ok{color:var(--ok);font-weight:600;font-size:16px}
-.lbl{font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;gap:8px}
-.opts{display:grid;gap:8px}
-.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:8px;cursor:pointer}
-.opt:has(input:checked){border:2px solid var(--ink);padding:9px 11px;background:var(--soft)}
-.opt:has(input:focus-visible){outline:2px solid var(--focus);outline-offset:2px}
-.opt input{margin-top:3px;accent-color:var(--ink)}
-.opt b{display:block;font-size:14px}.opt span{font-size:13px}.opt small{display:block;color:var(--muted);font-size:12px;line-height:1.35;margin-top:2px}
-.prime{border:1px solid var(--p2);border-radius:8px;padding:12px;font-size:13px;display:grid;gap:8px;background:var(--soft)}
-.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ok)}
-.qty{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.step{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--soft)}
-.step button{width:34px;height:34px;border:0;background:none;font-size:18px}
-.step button:disabled{color:var(--muted);cursor:default}
-.step output{min-width:40px;display:grid;place-items:center;font-weight:600;background:var(--surface);border-inline:1px solid var(--line)}
-.sub-total{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
 .btn{width:100%;border-radius:22px;padding:13px 16px;font-weight:600;border:1px solid transparent;font-size:15px}
 .btn.primary{background:var(--cta);color:var(--cta-ink)}.btn.primary:hover{filter:brightness(.96)}
 .btn.second{background:var(--surface);border-color:var(--muted);color:var(--ink);padding:11px 16px;font-size:14px;font-weight:500}
 .btn.second:hover{background:var(--soft)}
 .btn.sm{width:auto;font-size:13px;padding:8px 16px}
+.btn:disabled{opacity:.5;cursor:default}
+.card{border:1px solid var(--line);border-radius:8px;padding:20px;display:grid;gap:10px;align-content:start;background:var(--surface)}
+.card h3{margin:0;font-size:18px}
+.fine{font-size:12px;color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;border-radius:999px;padding:2px 10px;border:1px solid var(--line);background:var(--soft)}
+.chip.ok{color:var(--ok)}.chip.spon{color:var(--warn);border-color:var(--warn);background:transparent}
+.chip.x{cursor:pointer}
+.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}
+.step{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--soft)}
+.step button{width:36px;height:36px;border:0;background:none;font-size:18px}
+.step button:disabled{color:var(--muted);cursor:default}
+.step output{min-width:40px;display:grid;place-items:center;font-weight:600;background:var(--surface);border-inline:1px solid var(--line)}
+.lbl{font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+select,input[type=text],input[type=search]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--muted);border-radius:6px;padding:8px 10px}
+.field{display:grid;gap:4px}.field input{width:100%}
+.err{color:var(--bad);font-size:13px;font-weight:600}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:var(--surface)}
+.opt:has(input:checked){border:2px solid var(--ink);padding:9px 11px;background:var(--soft)}
+.opt:has(input:focus-visible){outline:3px solid var(--focus);outline-offset:2px}
+.opt input{margin-top:3px;accent-color:var(--ink)}
+.opt b{display:block;font-size:14px}.opt span{font-size:13px}.opt small{display:block;color:var(--muted);font-size:12px;line-height:1.35;margin-top:2px}
+.pimg{background:var(--soft);border-radius:8px;display:grid;place-items:center;overflow:hidden}
+.pimg svg{width:70%;max-width:100%;height:auto}
+.stars{color:#b45309;letter-spacing:1px}
+.price{font-variant-numeric:tabular-nums;font-weight:600}
+/* Inicio */
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;padding:24px 0}
+.hero .l{display:grid;gap:12px;align-content:center}
+.hero p{margin:0;color:var(--muted);font-size:15px;max-width:60ch}
+.hero .r{display:grid;place-items:center;background:var(--soft);border-radius:12px;padding:24px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin:8px 0 24px}
+.cat{border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:8px;background:var(--surface);text-align:left;font-weight:600}
+.cat:hover{background:var(--soft)}
+/* Resultados */
+.res{display:grid;grid-template-columns:260px minmax(0,1fr);gap:28px;padding:8px 0 24px;align-items:start}
+.filters{display:grid;gap:16px;border:1px solid var(--line);border-radius:8px;padding:16px;background:var(--surface)}
+.filters fieldset{border:0;margin:0;padding:0;display:grid;gap:6px}
+.filters legend{font-weight:600;padding:0;margin-bottom:6px}
+.filters label{display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
+.filters input{accent-color:var(--ink);width:16px;height:16px}
+.bar2{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;min-height:28px}
+.list{display:grid;gap:16px}
+.rc{display:grid;grid-template-columns:180px minmax(0,1fr);gap:16px;border:1px solid var(--line);border-radius:8px;padding:14px;background:var(--surface)}
+.rc .pimg{aspect-ratio:1/1}
+.rc h3{margin:0 0 4px;font-size:16px;font-weight:600;line-height:1.35}
+.rc .meta{display:grid;gap:5px;align-content:start}
+.sell{font-size:13px;font-weight:600;border-radius:6px;padding:4px 8px;display:inline-block;border:1px solid var(--seller-line);background:var(--seller-bg)}
+.sell.ext{border-color:var(--ext-line);background:var(--ext-bg)}
+.cmpbar{position:sticky;bottom:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between;box-shadow:0 -4px 16px rgba(0,0,0,.15);margin-top:16px;z-index:10}
+.empty{color:var(--muted);padding:28px;text-align:center;border:1px dashed var(--line);border-radius:8px;display:grid;gap:10px;justify-items:center}
+/* Ficha */
+.product{display:grid;grid-template-columns:minmax(0,520px) minmax(0,1fr) 360px;gap:32px;padding:12px 0 32px;align-items:start}
+.gal .pimg{aspect-ratio:13/12}
+.thumbs{display:flex;gap:12px;margin-top:12px}
+.thumbs button{width:80px;height:80px;border-radius:6px;background:var(--soft);border:1px solid var(--line);display:grid;place-items:center;padding:6px}
+.thumbs button[aria-pressed="true"]{border:2px solid var(--ink)}
+.rate{color:var(--link);margin:0 0 10px}
+.big-price{font-size:32px;margin:12px 0 4px}
+.info h3{font-size:16px;margin:18px 0 6px}
+.info ul{margin:0;padding-left:20px;display:grid;gap:4px}
+.swatches{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.sw2{width:34px;height:34px;border-radius:50%;border:2px solid var(--line);padding:0}
+.sw2[aria-pressed="true"]{outline:3px solid var(--ink);outline-offset:2px}
+.buy{border:1px solid var(--line);border-radius:8px;padding:20px;display:grid;gap:14px;background:var(--surface);position:sticky;top:12px}
+.buy .p{font-size:28px;font-weight:600;font-variant-numeric:tabular-nums}
+.total-line{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.total-line b{color:var(--ink)}
+.prime{border:1px solid var(--warn);border-radius:8px;padding:12px;font-size:13px;display:grid;gap:8px;background:var(--soft)}
+.qty{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .seller{background:var(--seller-bg);border:1px solid var(--seller-line);border-radius:8px;padding:12px;display:grid;gap:10px}
-.seller .lbl{color:var(--ok)}
+.seller.ext{background:var(--ext-bg);border-color:var(--ext-line)}
+.seller .lbl{color:var(--ok)}.seller.ext .lbl{color:var(--warn)}
 .seller dl{margin:0;display:grid;gap:8px}
 .seller dt{font-size:12px;color:var(--muted)}.seller dd{margin:0;font-size:14px;font-weight:600}
 .acc{border:1px solid var(--line);border-radius:8px}
@@ -120,287 +173,419 @@ hr{border:0;border-top:1px solid var(--line);margin:12px 0}
 .acc>button b{color:var(--link);display:block}.acc>button small{color:var(--muted);font-size:12px;display:block;line-height:1.35}
 .acc .caret{transition:transform .15s;color:var(--muted)}
 .acc[data-open="true"] .caret{transform:rotate(90deg)}
-.acc .body{padding:0 12px 12px;display:grid;gap:12px;border-top:1px solid var(--line);padding-top:12px}
-.acc .body[hidden]{display:none}
+.acc .body{padding:12px;display:grid;gap:12px;border-top:1px solid var(--line)}
 .mini{font-size:13px;display:grid;gap:4px}
-.mini .who{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:14px}
-.mini .who span{color:var(--muted);font-size:12px}.mini .who b{font-weight:600}
-.fine{font-size:11px;color:var(--muted)}
-/* Detalle */
-.detail{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:24px 0 40px;border-top:1px solid var(--line)}
-.card{border:1px solid var(--line);border-radius:8px;padding:20px;display:grid;gap:8px;align-content:start;background:var(--surface)}
-.card h3{margin:0;font-size:18px}
-.big{font-size:28px;font-weight:700}
+.mini .who{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:14px}.mini .who span{color:var(--muted);font-size:12px}.mini .who b{font-weight:600}
+.banner{border:1px solid var(--ok);background:var(--seller-bg);border-radius:8px;padding:14px 16px;display:grid;gap:10px;margin:8px 0 12px}
+.banner h2{margin:0;color:var(--ok);font-size:16px}
+.together{display:grid;gap:8px}
+.together label{display:flex;gap:8px;align-items:center}
+.detail{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:24px 0;border-top:1px solid var(--line)}
 .bars{display:grid;gap:6px}.bar{display:grid;grid-template-columns:48px 1fr 40px;gap:8px;align-items:center;font-size:13px}
 .bar i{display:block;height:10px;border-radius:4px;background:var(--soft);border:1px solid var(--line);overflow:hidden;position:relative}
-.bar i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:#f59e0b}
-.qa input{border:1px solid var(--line);border-radius:6px;padding:10px 12px;font:inherit;background:var(--soft);color:var(--ink);width:100%}
-.qa ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:10px}
-.qa li b{display:block}.qa li span{color:var(--muted);font-size:13px}
+.bar i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:#b45309}
+.rv{display:grid;gap:4px;padding:10px 0;border-top:1px solid var(--line)}
+.rv b{font-size:14px}
+.sticky-bar{display:none}
+/* Carrito, pago, pedidos */
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;padding:12px 0 32px;align-items:start}
+.line{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.line .pimg{aspect-ratio:1/1}.line b{display:block}.line small{color:var(--muted);display:block}
+.line .acts{display:flex;gap:14px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.tot{display:grid;gap:6px;font-variant-numeric:tabular-nums}
+.tot div{display:flex;justify-content:space-between;gap:12px}.tot .g{font-size:18px;font-weight:700;border-top:1px solid var(--line);padding-top:8px}
+.prog{display:flex;gap:0;margin:8px 0 16px;flex-wrap:wrap}
+.prog button{flex:1 1 140px;border:0;border-bottom:4px solid var(--line);background:none;padding:8px 4px;text-align:left;font-weight:600;color:var(--muted)}
+.prog button[aria-current="step"]{border-color:var(--ink);color:var(--ink)}
+.prog button.done{border-color:var(--ok);color:var(--ok)}
+.tl{display:flex;gap:0;margin:10px 0}
+.tl div{flex:1;text-align:center;font-size:12px;color:var(--muted);position:relative;padding-top:22px}
+.tl div::before{content:"";position:absolute;top:6px;left:0;right:0;height:4px;background:var(--line)}
+.tl div::after{content:"";position:absolute;top:0;left:calc(50% - 8px);width:16px;height:16px;border-radius:50%;background:var(--line);border:2px solid var(--surface)}
+.tl div.on{color:var(--ink);font-weight:600}.tl div.on::before{background:var(--ok)}.tl div.on::after{background:var(--ok)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 14px}
+.tabs button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 16px;font-weight:500}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+/* Catálogo de mejoras */
+.imps{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.imp{border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:8px;background:var(--surface);align-content:start}
+.imp .h{display:flex;gap:10px;align-items:center}
+.nb{min-width:28px;height:28px;border-radius:14px;color:#fff;font-weight:700;font-size:13px;display:inline-grid;place-items:center;padding:0 7px}
+.nb.doc{background:var(--o1)}.nb.der{background:var(--o2)}.nb.adi{background:var(--o3)}
+.imp h3{margin:0;font-size:15px}
+.imp dl{margin:0;display:grid;gap:6px;font-size:13px}.imp dt{font-weight:600;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.imp dd{margin:0}
 footer{background:var(--nav2);color:#fff;padding-block:28px}
-footer .wrap{display:grid;gap:6px}
-footer small{color:var(--nav-muted)}
+footer .wrap{display:grid;gap:6px}footer small{color:var(--nav-muted)}
 /* Superposiciones */
 .overlay{position:fixed;inset:0;background:var(--overlay);z-index:50;display:flex;justify-content:center;align-items:center;padding:16px}
-.overlay[hidden]{display:none}
-.modal{background:var(--surface);color:var(--ink);border-radius:12px;max-width:520px;width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:24px;display:grid;gap:14px;border:1px solid var(--line)}
-.modal h2{margin:0;font-size:20px}
-.modal ul{margin:0;padding-left:20px;display:grid;gap:6px}
-.modal .acts{display:flex;gap:10px;flex-wrap:wrap}
-.modal .acts .btn{flex:1 1 180px}
-.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--surface);color:var(--ink);z-index:60;padding:20px;padding-top:max(20px,env(safe-area-inset-top,0px));padding-bottom:max(20px,env(safe-area-inset-bottom,0px));padding-right:max(20px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px;border-left:1px solid var(--line);box-shadow:-8px 0 24px rgba(0,0,0,.25)}
-.drawer[hidden]{display:none}
-.drawer header{display:flex;justify-content:space-between;align-items:center}
-.drawer h2{margin:0;font-size:20px}
+.modal{background:var(--surface);color:var(--ink);border-radius:12px;max-width:560px;width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:24px;display:grid;gap:14px;border:1px solid var(--line)}
+.modal.wide{max-width:860px}
+.modal h2{margin:0;font-size:20px}.modal ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.modal .acts{display:flex;gap:10px;flex-wrap:wrap}.modal .acts .btn{flex:1 1 180px}
 .xbtn{background:none;border:0;font-size:22px;line-height:1;width:36px;height:36px;border-radius:6px}
 .xbtn:hover{background:var(--soft)}
-.lines{flex:1;overflow:auto;display:grid;gap:14px;align-content:start}
-.line{display:grid;grid-template-columns:64px 1fr;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line)}
-.line .ph{background:var(--soft);border-radius:6px;display:grid;place-items:center;padding:6px}
-.line b{display:block}.line small{color:var(--muted);display:block}
-.line .row{display:flex;gap:12px;align-items:center;margin-top:6px;flex-wrap:wrap}
-.tot{display:grid;gap:4px;font-variant-numeric:tabular-nums}
-.tot div{display:flex;justify-content:space-between}.tot .g{font-size:18px;font-weight:700}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(20px,env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:8px;z-index:80;max-width:calc(100% - 32px);font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
-.toast[hidden]{display:none}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(20px,env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:8px;z-index:80;max-width:calc(100% - 32px);font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.3);display:flex;gap:14px;align-items:center}
+.toast button{background:none;border:0;color:var(--bg);text-decoration:underline;font-weight:700}
 .steps{display:flex;gap:8px;font-size:12px;color:var(--muted);font-weight:600}.steps .on{color:var(--ink)}
-.empty{color:var(--muted);padding:24px 0;text-align:center}
-@media (max-width:1100px){.product{grid-template-columns:minmax(0,1fr) 360px}.gal{grid-column:1 / -1}.gal .main{aspect-ratio:16/9}}
-@media (max-width:820px){.product{grid-template-columns:minmax(0,1fr)}.buy{position:static}.detail{grid-template-columns:minmax(0,1fr)}.legend{grid-template-columns:minmax(0,1fr)}}
+.tbl{overflow-x:auto}.tbl table{border-collapse:collapse;width:100%;min-width:520px}.tbl th,.tbl td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;font-size:13px}.tbl th{background:var(--soft)}
+@media (max-width:1100px){.product{grid-template-columns:minmax(0,1fr) 360px}.gal{grid-column:1/-1}.gal .pimg{aspect-ratio:16/9}}
+@media (max-width:900px){.res{grid-template-columns:minmax(0,1fr)}.hero{grid-template-columns:minmax(0,1fr)}.cols{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:820px){.product{grid-template-columns:minmax(0,1fr)}.buy{position:static}.detail{grid-template-columns:minmax(0,1fr)}.rc{grid-template-columns:100px minmax(0,1fr)}.line{grid-template-columns:72px minmax(0,1fr)}.line>.price{grid-column:2}
+ .sticky-bar{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:10px max(16px,env(safe-area-inset-right,0px)) max(10px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));gap:12px;align-items:center;z-index:40;box-shadow:0 -4px 16px rgba(0,0,0,.15)}
+ .sticky-bar .btn{width:auto;flex:1;padding:12px}
+ main{padding-bottom:90px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
-
 </head>
 <body>
+<button class="skip" data-act="skip">Saltar al contenido</button>
 <header class="top bleed"><div class="wrap">
-  <span class="brand">amazon.com.mx</span>
+  <button class="brand" data-act="go" data-arg="inicio" aria-label="Ir al inicio">amazon.com.mx</button>
   <div class="loc">Enviar a<b>Puebla City 72580</b></div>
-  <form class="search" id="searchForm" role="search"><input id="q" type="search" placeholder="Buscar en Amazon México" aria-label="Buscar en Amazon México"><button type="submit">Buscar</button></form>
+  <form class="search" id="searchForm" role="search" data-imp="14" data-o="adi">
+    <input id="q" type="search" list="sug" placeholder="Buscar en Amazon México" aria-label="Buscar en Amazon México" autocomplete="off">
+    <datalist id="sug"><option value="audífonos inalámbricos"><option value="audífonos bluetooth"><option value="audífonos over-ear"><option value="audífonos in-ear"><option value="audífonos on-ear"></datalist>
+    <button type="submit">Buscar</button>
+  </form>
   <div class="hbtn" id="accWrap"><button class="hbtn" id="accBtn" aria-haspopup="true" aria-expanded="false"><small>Hola, identifícate</small><b>Cuenta y listas ▾</b></button>
     <div class="menu" id="accMenu" hidden>
-      <button id="mPrime" disabled>Administrar Prime <small id="mPrimeS">(no activo)</small></button>
-      <button id="mTheme">Cambiar tema claro / oscuro</button>
+      <button data-act="go" data-arg="pedidos">Mis pedidos</button>
+      <button id="mPrime" data-act="primeManage">Administrar Prime <small id="mPrimeS">(no activo)</small></button>
+      <button data-act="go" data-arg="ayuda">Ayuda</button>
+      <button data-act="go" data-arg="mejoras">Catálogo de mejoras</button>
+      <button data-act="theme">Cambiar tema claro / oscuro</button>
     </div></div>
-  <button class="hbtn cartbtn" id="cartBtn" aria-label="Abrir carrito"><span>Carrito</span><span class="n" id="cartN">0</span></button>
+  <button class="hbtn" data-act="go" data-arg="pedidos"><small>Devoluciones</small><b>y pedidos</b></button>
+  <button class="hbtn cartbtn" data-act="go" data-arg="carrito" aria-label="Ir al carrito"><span>Carrito</span><span class="n" id="cartN">0</span></button>
 </div></header>
 <nav class="sub bleed" aria-label="Categorías"><div class="wrap">
-  <button class="stub">Todo</button><button class="stub">Ofertas del día</button><button class="stub">Electrónicos</button><button class="stub">Hogar y cocina</button><button class="stub">Moda</button><button class="stub">Prime</button><button class="stub">Servicio al cliente</button>
+  <button class="all" data-act="menu">☰ Todo</button>
+  <button data-act="go" data-arg="resultados">Audífonos</button><button data-act="stub">Ofertas del día</button><button data-act="stub">Electrónicos</button><button data-act="stub">Hogar y cocina</button><button data-act="stub">Moda</button><button data-act="stub">Prime</button><button data-act="go" data-arg="ayuda">Servicio al cliente</button>
 </div></nav>
 <section class="mejoras bleed" aria-label="Mejoras propuestas"><div class="wrap">
   <label class="sw"><input type="checkbox" id="tg"><span class="track"></span>Mostrar mejoras propuestas</label>
-  <span class="note">Prototipo funcional de la propuesta de usabilidad. Ningún cobro ni suscripción es real.</span>
-  <div class="legend" style="grid-column:1/-1;width:100%">
-    <div><b><span class="badge b1" style="display:inline-grid">1</span>P1 · Menos sobrecarga</b>Un botón primario dominante, una sola fecha por defecto, cantidad compacta y ofertas secundarias colapsadas.</div>
-    <div><b><span class="badge b2" style="display:inline-grid">2</span>P2 · Prime sin patrones oscuros</b>Estándar y Prime con igual peso, sin preselección, costo y renovación visibles, cancelación en dos pasos.</div>
-    <div><b><span class="badge b3" style="display:inline-grid">3</span>P3 · Quién vende y quién envía</b>Bloque propio a 14 px en negrita con calificación, devoluciones y garantía.</div>
-  </div>
+  <button class="link" data-act="go" data-arg="mejoras">Ver catálogo de mejoras</button>
+  <span class="note">Prototipo funcional. Ningún cobro, pedido ni suscripción es real.</span>
+  <div class="key" style="width:100%"><span><i class="dot d-doc"></i>Propuesta de los documentos</span><span><i class="dot d-der"></i>Derivada de los documentos</span><span><i class="dot d-adi"></i>Adicional del análisis</span><span>Toca un número para ver el detalle.</span></div>
 </div></section>
-
-<main class="wrap">
-<p class="crumbs">Electrónicos › Audio › Audífonos › Sony WH-CH520</p>
-<div class="product">
-  <section class="gal" aria-label="Galería">
-    <div class="main" id="mainImg"></div>
-    <div class="thumbs" id="thumbs"></div>
-  </section>
-  <section class="info">
-    <h1>Sony Audífonos inalámbricos on-Ear WH-CH520, hasta 50 horas de batería, Negro (Versión Nacional)</h1>
-    <p class="rate"><span class="st">★★★★★</span> 4.8 · <a href="#resenas">10,555 calificaciones</a></p>
-    <hr>
-    <div class="price" id="infoPrice">$622.97</div>
-    <h2>Lo que debes saber</h2>
-    <ul><li>Hasta 50 horas de duración de batería</li><li>Audífonos on-Ear con conexión inalámbrica</li><li>Color: Negro</li><li>Versión nacional</li></ul>
-  </section>
-
-  <aside class="buy hl1" aria-label="Caja de compra">
-    <div><div class="p" id="buyPrice">$622.97</div><div class="ok">Disponible</div></div>
-
-    <div class="opts hl2" role="radiogroup" aria-labelledby="shipLbl">
-      <div class="lbl" id="shipLbl"><span class="badge b2">2</span>Elige tu envío</div>
-      <label class="opt"><input type="radio" name="ship" value="std" checked><div><b>Envío estándar · GRATIS</b><span>Llega el miércoles, 25 de noviembre</span></div></label>
-      <label class="opt"><input type="radio" name="ship" value="prime"><div><b>Envío Prime · GRATIS</b><span>Llega mañana, 24 de noviembre</span><small>Requiere Prime. Prueba gratuita; después, cargo recurrente con el costo visible antes de aceptar. Cancela en 2 pasos.</small></div></label>
-      <div class="prime" id="primePanel" hidden>
-        <div id="primeOff"><b>Prime no está activo en tu cuenta.</b><p style="margin:6px 0 10px">Revisa las condiciones antes de decidir. No se activa nada hasta que lo confirmes.</p>
-          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary sm" id="primeLearn">Ver condiciones de Prime</button><button class="btn second sm" id="primeBack">Quedarme con envío estándar</button></div></div>
-        <div id="primeOn" hidden><span class="chip">✓ Prime activo</span> <button class="link" id="primeCancelLink">Cancelar Prime en 2 pasos</button></div>
-      </div>
-    </div>
-
-    <div class="qty" id="qtyRow"><span>Cantidad:</span>
-      <div class="step"><button id="qMinus" aria-label="Disminuir cantidad">−</button><output id="qOut" aria-live="polite">1</output><button id="qPlus" aria-label="Aumentar cantidad">+</button></div>
-      <span class="sub-total" id="subTotal"></span></div>
-
-    <div class="hl1" style="display:grid;gap:10px"><span class="badge b1" style="display:none">1</span>
-      <button class="btn primary" id="addBtn">Agregar al carrito</button>
-      <button class="btn second" id="buyNow">Comprar ahora</button></div>
-
-    <div class="seller hl3" id="sellerBox">
-      <div class="lbl"><span class="badge b3">3</span>Quién vende y quién envía</div>
-      <dl>
-        <div><dt>Vendido por</dt><dd>Amazon México</dd></div>
-        <div><dt>Enviado por</dt><dd>Amazon México</dd></div>
-        <div><dt>Calificación del vendedor</dt><dd>★ 4.7 · 96 % de opiniones positivas*</dd></div>
-        <div><dt>Devoluciones</dt><dd>Hasta el 31 de enero de 2027</dd></div>
-        <div><dt>Garantía</dt><dd>12 meses del fabricante*</dd></div>
-      </dl>
-      <button class="link" id="policyBtn" style="text-align:left;font-size:13px">Ver política completa de devoluciones y garantía</button>
-    </div>
-
-    <div class="acc" id="acc" data-open="false">
-      <button id="accToggle" aria-expanded="false"><span><b>Protección, usados y otras ofertas</b><small>Plan de protección · Usado desde $591.82 · Otros vendedores (8)</small></span><span class="caret">▸</span></button>
-      <div class="body" id="accBody" hidden>
-        <div class="opts" role="radiogroup" aria-label="Plan de protección">
-          <div class="lbl">Plan de protección (opcional)</div>
-          <label class="opt"><input type="radio" name="plan" value="0" checked><div><b>Sin plan de protección</b></div></label>
-          <label class="opt"><input type="radio" name="plan" value="2"><div><b>2 años · $105.91</b><small>Assurant · daños accidentales</small></div></label>
-          <label class="opt"><input type="radio" name="plan" value="3"><div><b>3 años · $135.80</b><small>Assurant · daños accidentales</small></div></label>
-          <label class="opt"><input type="radio" name="plan" value="4"><div><b>4 años · $163.71</b><small>Assurant · daños accidentales</small></div></label>
-        </div>
-        <div class="mini"><div class="lbl">Usado: Como nuevo</div><b style="font-size:16px">$591.82</b>
-          <div class="who"><span>Enviado por</span><b>Amazon</b><span>Vendido por</span><b>Amazon Remates de Almacén</b></div>
-          <button class="link stub" style="text-align:left">Ver oferta usada</button></div>
-        <div class="mini"><div class="lbl">Otros vendedores (8)</div><span>Nuevo y usado desde $579.36 · Entrega GRATIS</span><button class="link stub" style="text-align:left">Ver las 8 ofertas</button></div>
-      </div>
-    </div>
-    <p class="fine">* Datos ilustrativos de la propuesta; precio, fechas, devolución y ofertas se tomaron de la ficha observada el 23-nov-2026.</p>
-  </aside>
-</div>
-
-<section class="detail" id="resenas">
-  <div class="card"><h3>Reseñas de clientes</h3><div class="big">4.8 de 5</div><span style="color:var(--muted)">10,555 calificaciones</span>
-    <div class="bars" aria-label="Distribución ilustrativa"><div class="bar"><span>5 ★</span><i style="--w:88%"></i><span>88 %</span></div><div class="bar"><span>4 ★</span><i style="--w:8%"></i><span>8 %</span></div><div class="bar"><span>3 ★</span><i style="--w:2%"></i><span>2 %</span></div><div class="bar"><span>2 ★</span><i style="--w:1%"></i><span>1 %</span></div><div class="bar"><span>1 ★</span><i style="--w:1%"></i><span>1 %</span></div></div>
-    <span class="fine">Distribución ilustrativa.</span><button class="link stub" style="text-align:left">Ver todas las reseñas</button></div>
-  <div class="card qa"><h3>Preguntas y respuestas de clientes</h3>
-    <input id="qaIn" type="search" placeholder="Busca una respuesta o pregunta algo sobre este producto" aria-label="Buscar en preguntas">
-    <ul id="qaList"></ul><span class="fine">Preguntas de ejemplo para el prototipo.</span></div>
-</section>
-</main>
-
-<footer class="bleed"><div class="wrap"><span>Prototipo de propuesta de rediseño: proyecto académico de usabilidad. No es el sitio oficial de Amazon México.</span><small>Ingeniería de Usabilidad · Grupo 7C</small></div></footer>
-
-<!-- Carrito -->
-<aside class="drawer" id="cart" hidden aria-label="Carrito">
-  <header><h2>Tu carrito</h2><button class="xbtn" data-close="cart" aria-label="Cerrar carrito">×</button></header>
-  <div class="lines" id="lines"></div>
-  <div class="tot" id="tot"></div>
-  <button class="btn primary" id="toCheckout">Proceder al pago (simulado)</button>
-</aside>
-<!-- Condiciones de Prime -->
-<div class="overlay" id="ovPrime" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="tPrime">
-  <h2 id="tPrime">Antes de activar Prime</h2>
-  <ul><li><b>Prueba gratuita</b>: sin cargo durante el periodo de prueba.</li><li><b>Después</b>: se cobra la tarifa vigente de Prime, que verás aquí antes de confirmar.</li><li><b>Renovación automática</b> hasta que canceles.</li><li><b>Cancelar</b> toma 2 pasos desde «Cuenta y listas».</li></ul>
-  <div class="acts"><button class="btn primary" id="primeYes">Activar prueba gratuita</button><button class="btn second" data-close="ovPrime">No, gracias</button></div>
-  <p class="fine">Simulación: no se activa ninguna suscripción real.</p>
-</div></div>
-<!-- Cancelar Prime -->
-<div class="overlay" id="ovCancel" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="tCancel">
-  <div class="steps"><span id="s1" class="on">Paso 1 de 2</span><span id="s2">Paso 2 de 2</span></div>
-  <h2 id="tCancel"></h2><p id="cancelTxt" style="margin:0"></p>
-  <div class="acts" id="cancelActs"></div>
-</div></div>
-<!-- Política -->
-<div class="overlay" id="ovPolicy" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="tPol">
-  <h2 id="tPol">Devoluciones y garantía</h2>
-  <ul><li><b>Devoluciones</b>: puedes devolver el producto hasta el 31 de enero de 2027.</li><li><b>Vendido y enviado por</b>: Amazon México.</li><li><b>Garantía</b>: 12 meses del fabricante*.</li></ul>
-  <p class="fine">* Dato ilustrativo de la propuesta.</p>
-  <div class="acts"><button class="btn second" data-close="ovPolicy">Cerrar</button></div>
-</div></div>
-<!-- Pago -->
-<div class="overlay" id="ovPay" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="tPay">
-  <h2 id="tPay">Resumen del pedido</h2>
-  <div id="payBody" class="tot"></div>
-  <p class="fine" id="payNote">Prototipo: no se realiza ningún cobro y no se piden datos de pago.</p>
-  <div class="acts"><button class="btn primary" id="payOk">Confirmar pedido (simulado)</button><button class="btn second" data-close="ovPay">Volver</button></div>
-</div></div>
+<main class="wrap" id="app" tabindex="-1"></main>
+<footer class="bleed"><div class="wrap"><span>Prototipo de propuesta de rediseño: proyecto académico de usabilidad. No es el sitio oficial de Amazon México.</span><small>Ingeniería de Usabilidad · Grupo 7C · Los datos reales provienen de la ficha Sony WH-CH520 observada el 23-nov-2026; el resto es ilustrativo.</small></div></footer>
+<div id="layer"></div>
 <div class="toast" id="toast" role="status" hidden></div>
 
 <script>
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const money=n=>n.toLocaleString('es-MX',{style:'currency',currency:'MXN'});
-const PRICE=622.97, MAXQ=30;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+const MAXQ=30, EXT_SHIP=59;
+const SHIPD={std:'miércoles, 25 de noviembre',prime:'mañana, 24 de noviembre'};
 const PLAN={0:{n:'Sin plan de protección',p:0},2:{n:'Protección 2 años',p:105.91},3:{n:'Protección 3 años',p:135.80},4:{n:'Protección 4 años',p:163.71}};
-const SHIP={std:'miércoles, 25 de noviembre',prime:'mañana, 24 de noviembre'};
-const S={qty:1,ship:'std',prime:false,plan:0,cart:[]};
-const headphones=(c,r=0)=>`<svg viewBox="0 0 200 180" aria-hidden="true" style="transform:rotate(${r}deg)"><path d="M32 110V92a68 68 0 0 1 136 0v18" fill="none" stroke="${c}" stroke-width="10" stroke-linecap="round"/><rect x="18" y="104" width="38" height="58" rx="16" fill="${c}"/><rect x="144" y="104" width="38" height="58" rx="16" fill="${c}"/><rect x="26" y="116" width="22" height="34" rx="10" fill="#fff" opacity=".12"/><rect x="152" y="116" width="22" height="34" rx="10" fill="#fff" opacity=".12"/></svg>`;
-let toastT;const toast=m=>{const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)};
-const open=id=>{const e=$('#'+id);e.hidden=false;const b=e.querySelector('button:not([disabled])');if(b)b.focus()};
-const close=id=>{$('#'+id).hidden=true};
-/* Galería */
-const views=[['#1f2937',0],['#111827',-8],['#374151',8],['#0b1220',0]];
-let gi=0;
-function drawGal(){$('#mainImg').innerHTML=headphones(views[gi][0],views[gi][1]);$('#thumbs').innerHTML=views.map((v,i)=>`<button aria-label="Vista ${i+1}" aria-pressed="${i===gi}" data-i="${i}">${headphones(v[0],v[1])}</button>`).join('')}
-$('#thumbs').addEventListener('click',e=>{const b=e.target.closest('button');if(b){gi=+b.dataset.i;drawGal()}});
-/* Caja de compra */
-const unit=()=>PRICE+PLAN[S.plan].p;
-function renderBuy(){
-  $('#qOut').textContent=S.qty;$('#qMinus').disabled=S.qty<=1;$('#qPlus').disabled=S.qty>=MAXQ;
-  $('#subTotal').textContent='Subtotal: '+money(unit()*S.qty)+(S.plan?' (con protección)':'');
-  const pp=$('#primePanel');pp.hidden=!(S.ship==='prime');
-  $('#primeOff').hidden=S.prime;$('#primeOn').hidden=!S.prime;
-  $('#mPrime').disabled=!S.prime;$('#mPrimeS').textContent=S.prime?'(activo)':'(no activo)';
-}
-$('#qMinus').onclick=()=>{S.qty=Math.max(1,S.qty-1);renderBuy()};
-$('#qPlus').onclick=()=>{S.qty=Math.min(MAXQ,S.qty+1);renderBuy()};
-$$('input[name=ship]').forEach(r=>r.onchange=()=>{S.ship=r.value;renderBuy()});
-$$('input[name=plan]').forEach(r=>r.onchange=()=>{S.plan=+r.value;renderBuy()});
-$('#primeBack').onclick=()=>{document.querySelector('input[name=ship][value=std]').checked=true;S.ship='std';renderBuy()};
-$('#primeLearn').onclick=()=>open('ovPrime');
-$('#primeYes').onclick=()=>{S.prime=true;close('ovPrime');renderBuy();toast('Prime activado (simulado). Puedes cancelarlo en 2 pasos.')};
-$('#acc').querySelector('#accToggle').onclick=()=>{const a=$('#acc'),o=a.dataset.open!=='true';a.dataset.open=o;$('#accBody').hidden=!o;$('#accToggle').setAttribute('aria-expanded',o)};
-$('#policyBtn').onclick=()=>open('ovPolicy');
-/* Carrito */
-function addToCart(){
-  if(S.ship==='prime'&&!S.prime){toast('Para usar envío Prime, revisa y activa Prime, o elige envío estándar.');$('#primePanel').scrollIntoView({block:'center',behavior:'smooth'});return false}
-  const l=S.cart.find(x=>x.plan===S.plan&&x.ship===S.ship);
-  if(l)l.qty=Math.min(MAXQ,l.qty+S.qty);else S.cart.push({plan:S.plan,ship:S.ship,qty:S.qty});
-  renderCart();return true;
-}
-const sub=()=>S.cart.reduce((a,l)=>a+(PRICE+PLAN[l.plan].p)*l.qty,0);
+const COL=[['Negro','#1f2937'],['Azul','#1e3a8a'],['Blanco','#d1d5db']];
+const P=[
+ {id:'sony',name:'Sony Audífonos inalámbricos on-Ear WH-CH520, hasta 50 horas de batería, Negro (Versión Nacional)',short:'Sony WH-CH520',brand:'Sony',type:'On-ear',price:622.97,rating:4.8,reviews:10555,prime:true,seller:'Amazon México',amazon:true,sr:4.7,sp:96,cols:[COL[0]],real:true,feat:['Hasta 50 horas de duración de batería','Audífonos on-Ear con conexión inalámbrica','Color: Negro','Versión nacional']},
+ {id:'auralis',name:'Auralis Tune 300 audífonos inalámbricos over-ear con cancelación de ruido',short:'Auralis Tune 300',brand:'Auralis',type:'Over-ear',price:1499,list:1899,rating:4.5,reviews:3210,prime:true,seller:'Amazon México',amazon:true,sr:4.7,sp:96,cols:COL,feat:['Cancelación activa de ruido','Hasta 30 horas de batería','Bluetooth 5.3']},
+ {id:'tonal',name:'Tonal Studio audífonos over-ear inalámbricos de estudio',short:'Tonal Studio',brand:'Tonal',type:'Over-ear',price:2299,rating:4.7,reviews:5120,prime:true,seller:'Amazon México',amazon:true,sr:4.7,sp:96,cols:COL,feat:['Respuesta plana para monitoreo','Hasta 40 horas de batería','Cable incluido']},
+ {id:'auralis2',name:'Auralis Air audífonos in-ear deportivos resistentes al agua',short:'Auralis Air',brand:'Auralis',type:'In-ear',price:799,list:999,rating:4.4,reviews:2750,prime:true,seller:'Amazon México',amazon:true,sr:4.7,sp:96,cols:COL,feat:['Resistencia IPX5','Estuche de carga','Hasta 24 horas con estuche']},
+ {id:'kestrel',name:'Kestrel Pods 2 audífonos in-ear true wireless',short:'Kestrel Pods 2',brand:'Kestrel',type:'In-ear',price:549,list:699,rating:4.2,reviews:1876,prime:false,seller:'Kestrel Store MX',amazon:false,sr:4.1,sp:81,cols:COL,sponsored:true,feat:['Estuche de carga','Bluetooth 5.2','Control táctil']},
+ {id:'kestrel2',name:'Kestrel Buds Lite audífonos in-ear inalámbricos básicos',short:'Kestrel Buds Lite',brand:'Kestrel',type:'In-ear',price:299,rating:4.0,reviews:2300,prime:false,seller:'Kestrel Store MX',amazon:false,sr:4.1,sp:81,cols:COL,sponsored:true,feat:['Ligeros','Bluetooth 5.0']},
+ {id:'nimbo',name:'Nimbo Beat audífonos on-ear plegables Bluetooth',short:'Nimbo Beat',brand:'Nimbo',type:'On-ear',price:399,rating:3.9,reviews:642,prime:false,seller:'ElectroMarket Puebla',amazon:false,sr:3.6,sp:72,cols:COL,feat:['Plegables','Hasta 20 horas de batería']},
+ {id:'vento',name:'Vento Sport audífonos on-ear inalámbricos para deporte',short:'Vento Sport',brand:'Vento',type:'On-ear',price:459,rating:4.3,reviews:980,prime:true,seller:'Vento Oficial',amazon:false,sr:4.6,sp:94,cols:COL,feat:['Diadema ajustable','Resistente al sudor']}
+];
+const pid=id=>P.find(p=>p.id===id);
+const shipCost=p=>p.amazon?0:EXT_SHIP;
+const REV=[
+ {u:'Carlos M.',st:5,t:'Muy buena batería',b:'Me dura varios días de uso normal.',v:true,ph:true,d:'12 nov 2026'},
+ {u:'Ana R.',st:4,t:'Cómodos, sonido correcto',b:'Para el precio cumplen. La diadema podría ser más suave.',v:true,ph:false,d:'3 nov 2026'},
+ {u:'Luis P.',st:3,t:'Esperaba más graves',b:'Buenos para llamadas y podcasts.',v:false,ph:false,d:'28 oct 2026'},
+ {u:'Marta S.',st:5,t:'Llegaron en la fecha indicada',b:'Empaque correcto y producto original.',v:true,ph:true,d:'20 oct 2026'}
+];
+const STAGES=['Pedido confirmado','En preparación','En tránsito','Entregado'];
+const S={q:'',f:{brand:[],type:[],price:'',rating:0,prime:false,amazon:false},sort:'rel',cmp:[],
+ pr:{id:'sony',color:0,qty:1,plan:0},ship:'std',prime:false,cart:[],saved:[],buyNow:null,step:1,addr:0,pay:'card',cp:'',
+ orders:[{id:'702-4410-1',date:'18 nov 2026',items:'Auralis Air audífonos in-ear',total:799,stage:2,eta:'25 de noviembre',demo:true},{id:'702-3984-7',date:'2 nov 2026',items:'Nimbo Beat audífonos on-ear',total:458,stage:3,eta:'6 de noviembre',demo:true}],
+ rev:{st:0,ph:false},impF:'todas',recent:[],added:null,accOpen:false,route:'inicio',prev:'inicio',lastOrder:null,helpTab:'entrega'};
+
+/* ---------- Catálogo de mejoras ---------- */
+const O={doc:'Propuesta de los documentos',der:'Derivada de los documentos',adi:'Adicional del análisis'};
+const IMPS=[
+ {n:1,o:'doc',t:'Caja de compra sin sobrecarga',h:'H8 Diseño minimalista · H6 Reconocimiento',a:'Bloque de unos 1,127 px con 169 elementos interactivos, 30 opciones de cantidad, dos fechas de entrega y dos botones casi idénticos (ficha observada el 23-nov-2026).',d:'Un botón primario dominante, una sola fecha por defecto, cantidad con stepper y ofertas secundarias en un acordeón colapsado.',v:'Tiempo y errores al agregar un producto (a medir con participantes).',r:'producto-sony'},
+ {n:2,o:'doc',t:'Envío y Prime sin patrones oscuros',h:'H5 Prevención de errores · H3 Control y libertad',a:'Según el documento del proyecto: «Envío gratis con Prime» preseleccionado o destacado sobre el estándar, y cancelación difícil (no verificado en esta sesión por falta de cuenta).',d:'Estándar y Prime con igual peso, sin preselección; Prime se activa solo tras ver condiciones, costo y renovación; cancelación en 2 pasos con «Conservar» y «Cancelar» de igual jerarquía.',v:'Suscripciones involuntarias y pasos para cancelar (a medir).',r:'producto-sony'},
+ {n:3,o:'doc',t:'Quién vende y quién envía, visible',h:'H1 Visibilidad · H6 Reconocimiento',a:'«Remitente / Vendedor», devoluciones y pago a 12 px en gris; sin calificación ni garantía en la caja (observado).',d:'Bloque propio a 14 px en negrita con vendedor, envío, calificación, devoluciones y garantía; distingue «Amazon México» de «Vendedor externo» también en los resultados.',v:'Porcentaje de participantes que identifican al vendedor sin ayuda.',r:'producto-kestrel'},
+ {n:4,o:'der',t:'Filtros comprensibles y que conservan el contexto',h:'H1 Visibilidad · H3 Control · H6 Reconocimiento',a:'La auditoría (Tarea 1) revisa si los filtros son comprensibles y si la búsqueda se conserva al regresar.',d:'Filtros agrupados con etiquetas claras, chips de filtros activos, contador de resultados, «Limpiar todo», y búsqueda y filtros conservados al volver de una ficha.',v:'Tiempo para aplicar dos filtros y regresar sin perder la búsqueda.',r:'resultados'},
+ {n:5,o:'der',t:'Carrito reversible y editable',h:'H3 Control y libertad · H5 Prevención',a:'La auditoría (Tarea 2) evalúa modificar cantidad y eliminar, y si el sistema permite corregir errores.',d:'Cantidad con stepper, «Eliminar» con «Deshacer», «Guardar para después» y resumen siempre visible.',v:'Errores no recuperados al eliminar o cambiar cantidad.',r:'carrito'},
+ {n:6,o:'der',t:'Confirmación clara y recomendaciones no intrusivas',h:'H1 Visibilidad · H8 Minimalismo',a:'El documento señala el cross-selling intrusivo tras agregar al carrito.',d:'Confirmación en línea con «Ver carrito» y «Seguir comprando» de igual jerarquía; «Comprados juntos» opcional, colapsado y sin casillas marcadas.',v:'Agregados accidentales y tiempo hasta la siguiente acción.',r:'producto-sony'},
+ {n:7,o:'der',t:'Costo total transparente desde la ficha',h:'H1 Visibilidad · H5 Prevención',a:'El perfil de usuario secundario del documento sufre cargos de envío inesperados al final del embudo.',d:'«Total estimado» con envío e impuestos desde la ficha, el carrito y el pago, con el mismo desglose.',v:'Abandono del carrito por costos inesperados (hipótesis a validar).',r:'producto-kestrel'},
+ {n:8,o:'der',t:'Seguimiento del pedido por etapas',h:'H1 Visibilidad del estado del sistema',a:'El documento describe «Mis pedidos» con estado de entrega como función principal.',d:'Línea de tiempo con etapa actual, fecha estimada y acciones disponibles según la etapa (cancelar, devolver).',v:'Consultas a soporte sobre el estado del pedido.',r:'pedidos'},
+ {n:9,o:'der',t:'Ayuda de entrega, vendedor y devoluciones sin salir de la tarea',h:'H10 Ayuda y documentación · H3 Control',a:'La auditoría (Tarea 3) evalúa consultar entrega, vendedor, devoluciones y ayuda sin perder el contexto.',d:'Ayuda rápida en ventana desde la ficha y centro de ayuda con botón «Volver a lo que estabas haciendo».',v:'Éxito al consultar la política de devoluciones y regresar a la compra.',r:'producto-sony'},
+ {n:10,o:'adi',t:'Resultados patrocinados etiquetados',h:'H4 Consistencia · H1 Visibilidad',a:'En la búsqueda observada, los primeros resultados eran patrocinados.',d:'Etiqueta «Patrocinado» legible y distinta del resto, sin mezclarlos con el orden por relevancia.',v:'Proporción de participantes que distinguen anuncios de resultados.',r:'resultados'},
+ {n:11,o:'adi',t:'Reseñas filtrables y con compra verificada',h:'H6 Reconocimiento · H7 Eficiencia',a:'El documento destaca la validación social (reseñas con fotos) pero no propone cómo explorarlas.',d:'Filtro por estrellas, «Con fotos» y sello «Compra verificada».',v:'Tiempo para encontrar una opinión relevante.',r:'producto-sony'},
+ {n:12,o:'adi',t:'Indicador de progreso del pago',h:'H1 Visibilidad del estado del sistema',a:'El flujo de pago no se evaluó en la auditoría (alcance excluye pago real).',d:'Pasos «Dirección · Envío y pago · Revisar» navegables, con paso actual y completados.',v:'Abandono por paso del pago.',r:'pago'},
+ {n:13,o:'adi',t:'«Comprar ahora» con revisión previa',h:'H5 Prevención de errores · H3 Control',a:'El documento describe la compra en 1 clic y la compra impulsiva por fricción reducida.',d:'«Comprar ahora» abre una revisión con dirección, envío, total y datos editables; el pedido se puede cancelar mientras esté en preparación.',v:'Compras no deseadas y cancelaciones.',r:'producto-sony'},
+ {n:14,o:'adi',t:'Accesibilidad básica',h:'H4 Estándares · H7 Flexibilidad',a:'La auditoría excluye la accesibilidad con tecnologías de asistencia.',d:'Texto ≥ 14 px, contraste suficiente, foco visible, etiquetas en controles, enlace «Saltar al contenido» y tema oscuro (referencia: WCAG 2.2).',v:'Revisión con lista de WCAG 2.2 y herramienta de contraste.',r:'inicio'},
+ {n:15,o:'adi',t:'Barra de compra fija en móvil',h:'H7 Eficiencia · H1 Visibilidad',a:'El documento indica alta frecuencia de uso desde el móvil.',d:'Barra inferior con precio y «Agregar al carrito» siempre al alcance del pulgar (se ve en pantallas angostas).',v:'Tiempo hasta agregar al carrito en móvil.',r:'producto-sony'},
+ {n:16,o:'adi',t:'Errores y estados vacíos que ayudan',h:'H9 Ayuda para recuperarse de errores',a:'No se documentan mensajes de error.',d:'Mensajes con causa y solución (código postal, cantidad máxima, sin resultados) y acciones directas.',v:'Errores recuperados sin ayuda.',r:'pago'},
+ {n:17,o:'adi',t:'Comparador de productos',h:'H6 Reconocimiento antes que recuerdo',a:'El documento señala la comparación pasiva en varias pestañas.',d:'Selección de hasta 3 productos y tabla comparativa con precio, vendedor y envío.',v:'Uso del comparador y tiempo de decisión.',r:'resultados'}
+];
+const imp=n=>IMPS.find(i=>i.n===n);
+
+/* ---------- Utilidades ---------- */
+const headphones=(c)=>`<svg viewBox="0 0 200 180" aria-hidden="true"><path d="M32 110V92a68 68 0 0 1 136 0v18" fill="none" stroke="${c}" stroke-width="10" stroke-linecap="round"/><rect x="18" y="104" width="38" height="58" rx="16" fill="${c}"/><rect x="144" y="104" width="38" height="58" rx="16" fill="${c}"/></svg>`;
+const stars=r=>'★'.repeat(Math.round(r))+'☆'.repeat(5-Math.round(r));
+let toastT;
+function toast(m,label,fn){const t=$('#toast');t.innerHTML=`<span>${esc(m)}</span>${label?`<button id="tAct">${esc(label)}</button>`:''}`;t.hidden=false;if(label)$('#tAct').onclick=()=>{fn();t.hidden=true};clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,label?7000:3500)}
+function modal(html,wide){$('#layer').innerHTML=`<div class="overlay" data-act="ovclose"><div class="modal${wide?' wide':''}" role="dialog" aria-modal="true">${html}</div></div>`;const b=$('#layer .modal button,#layer .modal input,#layer .modal select');if(b)b.focus()}
+const closeModal=()=>{$('#layer').innerHTML=''};
+const home=()=>S.prev&&S.prev!==S.route?S.prev:'inicio';
+function dets(lines,mode){let sub=0,ship=0;const sellers=new Set(),notes=[];
+ for(const l of lines){const p=pid(l.pid);sub+=(p.price+PLAN[l.plan].p)*l.qty;
+  if(mode==='prime'&&p.prime){}else{if(mode==='prime'&&!p.prime)notes.push(p.short+' no es elegible para Prime; se envía con envío estándar.');if(!sellers.has(p.seller)){sellers.add(p.seller);ship+=shipCost(p)}}}
+ return {sub,ship,total:sub+ship,notes}}
+const tot=d=>`<div><span>Subtotal</span><span>${money(d.sub)}</span></div><div><span>Envío</span><span>${d.ship?money(d.ship):'GRATIS'}</span></div><div class="g"><span>Total con impuestos incluidos</span><span>${money(d.total)}</span></div>`;
 const count=()=>S.cart.reduce((a,l)=>a+l.qty,0);
-function totals(){const s=sub();return `<div><span>Subtotal (${count()} ${count()===1?'artículo':'artículos'})</span><span>${money(s)}</span></div><div><span>Envío</span><span>GRATIS</span></div><div class="g"><span>Total con impuestos</span><span>${money(s)}</span></div>`}
-function renderCart(){
-  $('#cartN').textContent=count();
-  const L=$('#lines');
-  L.innerHTML=S.cart.length?S.cart.map((l,i)=>`<div class="line"><div class="ph">${headphones('#1f2937')}</div><div><b>Sony WH-CH520, Negro</b><small>${PLAN[l.plan].n} · ${l.ship==='prime'?'Envío Prime · llega '+SHIP.prime:'Envío estándar · llega '+SHIP.std}</small><b>${money((PRICE+PLAN[l.plan].p)*l.qty)}</b><div class="row"><div class="step"><button data-a="m" data-i="${i}" aria-label="Disminuir">−</button><output>${l.qty}</output><button data-a="p" data-i="${i}" aria-label="Aumentar">+</button></div><button class="link" data-a="x" data-i="${i}">Eliminar</button></div></div></div>`).join(''):'<p class="empty">Tu carrito está vacío.</p>';
-  $('#tot').innerHTML=S.cart.length?totals():'';$('#toCheckout').disabled=!S.cart.length;
+const coLines=()=>S.buyNow?[S.buyNow]:S.cart;
+
+/* ---------- Enrutador ---------- */
+function parse(){const h=location.hash.slice(1)||'inicio';if(h.startsWith('producto-')){const id=h.slice(9);return pid(id)?{r:'producto',id}:{r:'inicio'}}return {r:['inicio','resultados','carrito','pago','confirmacion','pedidos','ayuda','mejoras'].includes(h)?h:'inicio'}}
+function go(r){if(location.hash==='#'+r)render();else location.hash=r}
+let lastKey='';
+function render(keepScroll){
+ const f=document.activeElement&&document.activeElement.dataset?document.activeElement.dataset.k:null;
+ const x=parse();const key=x.r+(x.id||'');
+ if(key!==lastKey){S.prev=S.route;lastKey=key}
+ S.route=x.r==='producto'?'producto-'+x.id:x.r;
+ const V={inicio:vHome,resultados:vRes,producto:()=>vProd(x.id),carrito:vCart,pago:vPay,confirmacion:vConf,pedidos:vOrders,ayuda:vHelp,mejoras:vImps}[x.r];
+ $('#app').innerHTML=V();
+ decorate();refreshHdr();
+ if(!keepScroll)window.scrollTo(0,0);
+ if(f){const e=$(`[data-k="${f}"]`);if(e)e.focus()}
 }
-$('#lines').addEventListener('click',e=>{const b=e.target.closest('button[data-a]');if(!b)return;const i=+b.dataset.i,l=S.cart[i];
-  if(b.dataset.a==='m'){l.qty--;if(l.qty<1)S.cart.splice(i,1)}else if(b.dataset.a==='p'){l.qty=Math.min(MAXQ,l.qty+1)}else{S.cart.splice(i,1)}renderCart()});
-$('#addBtn').onclick=()=>{if(addToCart()){open('cart');}};
-$('#cartBtn').onclick=()=>{open('cart')};
-$('#toCheckout').onclick=()=>{$('#payBody').innerHTML=totals()+'<div style="display:block;margin-top:8px"><span style="color:var(--muted)">Método de pago: se elige en el siguiente paso (simulado).</span></div>';$('#payOk').hidden=false;$('#payNote').textContent='Prototipo: no se realiza ningún cobro y no se piden datos de pago.';close('cart');open('ovPay')};
-$('#buyNow').onclick=()=>{
-  if(S.ship==='prime'&&!S.prime){toast('Para usar envío Prime, revisa y activa Prime, o elige envío estándar.');return}
-  const u=unit()*S.qty;
-  $('#payBody').innerHTML=`<div><span>Sony WH-CH520 × ${S.qty}${S.plan?' + '+PLAN[S.plan].n:''}</span><span>${money(u)}</span></div><div><span>Envío (${S.ship==='prime'?'Prime':'estándar'}) · llega ${SHIP[S.ship]}</span><span>GRATIS</span></div><div class="g"><span>Total con impuestos</span><span>${money(u)}</span></div>`;
-  $('#payOk').hidden=false;$('#payNote').textContent='Prototipo: no se realiza ningún cobro y no se piden datos de pago.';open('ovPay')};
-$('#payOk').onclick=()=>{$('#payBody').innerHTML='<div class="g"><span>Pedido simulado registrado</span></div>';$('#payNote').textContent='No se realizó ningún cargo.';$('#payOk').hidden=true;S.cart=[];renderCart()};
-/* Cancelar Prime */
-function cancelStep(n){
-  $('#s1').className=n===1?'on':'';$('#s2').className=n===2?'on':'';
-  const t=$('#tCancel'),x=$('#cancelTxt'),a=$('#cancelActs');
-  if(n===1){t.textContent='Tu suscripción a Prime';x.textContent='Prueba gratuita activa. Si cancelas, pierdes el envío Prime en tus próximos pedidos.';a.innerHTML='<button class="btn second" id="cKeep">Conservar Prime</button><button class="btn second" id="cNext">Continuar con la cancelación</button>'}
-  else if(n===2){t.textContent='Confirma la cancelación';x.textContent='Se cancelará tu suscripción y no habrá cargos posteriores. Puedes volver a activar Prime cuando quieras.';a.innerHTML='<button class="btn second" id="cKeep">Conservar Prime</button><button class="btn primary" id="cDo">Sí, cancelar Prime</button>'}
-  else{t.textContent='Prime cancelado';x.textContent='Tu suscripción terminó (simulado). No se hará ningún cargo.';a.innerHTML='<button class="btn second" data-close="ovCancel">Cerrar</button>'}
-  const k=$('#cKeep');if(k)k.onclick=()=>close('ovCancel');const nx=$('#cNext');if(nx)nx.onclick=()=>cancelStep(2);const d=$('#cDo');if(d)d.onclick=()=>{S.prime=false;if(S.ship==='prime'){document.querySelector('input[name=ship][value=std]').checked=true;S.ship='std'}renderBuy();cancelStep(3)};
-}
-const startCancel=()=>{cancelStep(1);open('ovCancel')};
-$('#primeCancelLink').onclick=startCancel;
-$('#mPrime').onclick=()=>{$('#accMenu').hidden=true;startCancel()};
-/* Cuenta, tema, buscador, mejoras, Q&A */
-$('#accBtn').onclick=e=>{e.stopPropagation();const m=$('#accMenu');m.hidden=!m.hidden;$('#accBtn').setAttribute('aria-expanded',!m.hidden)};
-document.addEventListener('click',e=>{if(!e.target.closest('#accWrap'))$('#accMenu').hidden=true});
-$('#mTheme').onclick=()=>{const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark';$('#accMenu').hidden=true};
-$('#searchForm').onsubmit=e=>{e.preventDefault();toast('La búsqueda no forma parte del prototipo.')};
-$$('.stub').forEach(b=>b.addEventListener('click',()=>toast('Esta sección no forma parte del prototipo.')));
-$('#tg').onchange=e=>document.body.classList.toggle('show',e.target.checked);
-const QA=[['¿Se puede usar mientras se carga?','Sí, según la ficha del fabricante. Ejemplo para el prototipo.'],['¿Incluye cable de carga?','Incluye cable USB-C. Ejemplo para el prototipo.'],['¿Se conecta a dos dispositivos?','Ejemplo para el prototipo: consulta la descripción del fabricante.']];
-function drawQA(){const f=$('#qaIn').value.toLowerCase();const r=QA.filter(x=>(x[0]+x[1]).toLowerCase().includes(f));$('#qaList').innerHTML=r.length?r.map(x=>`<li><b>${x[0]}</b><span>${x[1]}</span></li>`).join(''):'<li><span>Sin resultados. Puedes enviar tu pregunta (simulado).</span></li>'}
-$('#qaIn').oninput=drawQA;
-/* Cierres */
-document.addEventListener('click',e=>{const c=e.target.closest('[data-close]');if(c)close(c.dataset.close);if(e.target.classList.contains('overlay'))e.target.hidden=true});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){$$('.overlay,.drawer').forEach(x=>x.hidden=true);$('#accMenu').hidden=true}});
-drawGal();renderBuy();renderCart();drawQA();
+function refreshHdr(){$('#cartN').textContent=count();$('#mPrime').disabled=!S.prime;$('#mPrimeS').textContent=S.prime?'(activo)':'(no activo)'}
+function decorate(){$$('[data-imp]',$('#app')).forEach(e=>{if(e.querySelector(':scope>.ibadge'))return;const n=+e.dataset.imp,i=imp(n);const b=document.createElement('button');b.className='ibadge';b.dataset.act='imp';b.dataset.arg=n;b.dataset.o=i.o;b.textContent=n;b.setAttribute('aria-label','Mejora '+n+': '+i.t);e.prepend(b)});$$('[data-imp]').forEach(e=>{e.dataset.o=e.dataset.o||imp(+e.dataset.imp).o})}
+
+/* ---------- Inicio ---------- */
+function vHome(){
+ const rec=S.recent.map(pid).filter(Boolean).slice(0,3);
+ return `<section class="hero"><div class="l"><h1>Compra con claridad</h1><p>Prototipo funcional de Amazon México con mejoras de usabilidad: menos saturación en la compra, envío y Prime sin presión, y vendedores visibles. Recorre el flujo completo, desde buscar hasta rastrear el pedido.</p>
+ <div class="row"><button class="btn primary sm" data-act="go" data-arg="resultados">Probar: buscar audífonos</button><button class="btn second sm" data-act="showOn">Mostrar mejoras</button><button class="btn second sm" data-act="go" data-arg="mejoras">Catálogo de mejoras</button></div></div>
+ <div class="r">${headphones('#1f2937')}</div></section>
+ <h2>Comprar por departamento</h2>
+ <div class="catgrid"><button class="cat" data-act="go" data-arg="resultados">🎧 Audio y audífonos<br><small class="fine">Disponible en el prototipo</small></button>
+ ${['Electrónicos','Hogar y cocina','Cómputo','Moda','Videojuegos'].map(c=>`<button class="cat" data-act="stub">${c}<br><small class="fine">Fuera del alcance del prototipo</small></button>`).join('')}</div>
+ ${rec.length?`<h2>Vistos recientemente</h2><div class="catgrid">${rec.map(p=>`<button class="cat" data-act="go" data-arg="producto-${p.id}">${esc(p.short)}<br><span class="price">${money(p.price)}</span></button>`).join('')}</div>`:''}
+ <div class="card"><h3>Cómo está organizado este prototipo</h3><p style="margin:0">Las mejoras llevan un número. Los <b>1 a 3</b> vienen de los documentos del equipo; los <b>4 a 9</b> se derivan del alcance y de las tareas de la auditoría y de los perfiles de usuario; los <b>10 a 17</b> son adicionales del análisis. Ninguna sustituye una evaluación con usuarios.</p></div>`}
+
+/* ---------- Resultados ---------- */
+function matches(p){
+ const q=norm(S.q).split(/\s+/).filter(t=>t.length>1&&!['de','para','con','los','las'].includes(t));
+ const h=norm(p.name+' '+p.brand+' '+p.type+' audifonos auriculares inalambricos bluetooth');
+ if(!q.every(t=>h.includes(t)))return false;
+ const f=S.f;
+ if(f.brand.length&&!f.brand.includes(p.brand))return false;
+ if(f.type.length&&!f.type.includes(p.type))return false;
+ if(f.rating&&p.rating<f.rating)return false;
+ if(f.prime&&!p.prime)return false;
+ if(f.amazon&&!p.amazon)return false;
+ const r={'a':[0,500],'b':[500,1000],'c':[1000,2000],'d':[2000,1e9]}[f.price];
+ if(r&&!(p.price>=r[0]&&p.price<r[1]))return false;return true}
+function results(){let r=P.filter(matches);
+ if(S.sort==='pa')r.sort((a,b)=>a.price-b.price);else if(S.sort==='pd')r.sort((a,b)=>b.price-a.price);else if(S.sort==='cal')r.sort((a,b)=>b.rating-a.rating);
+ else r.sort((a,b)=>(a.sponsored?1:0)-(b.sponsored?1:0));return r}
+const PR={a:'Menos de $500',b:'$500 a $1,000',c:'$1,000 a $2,000',d:'Más de $2,000'};
+function chipsHtml(){const f=S.f,c=[];f.brand.forEach(b=>c.push(['brand:'+b,'Marca: '+b]));f.type.forEach(b=>c.push(['type:'+b,'Tipo: '+b]));if(f.price)c.push(['price','Precio: '+PR[f.price]]);if(f.rating)c.push(['rating',f.rating+' estrellas o más']);if(f.prime)c.push(['prime','Envío Prime']);if(f.amazon)c.push(['amazon','Vendido por Amazon México']);
+ return c.length?c.map(x=>`<button class="chip x" data-act="rmf" data-arg="${esc(x[0])}" aria-label="Quitar filtro ${esc(x[1])}">${esc(x[1])} ×</button>`).join('')+`<button class="link" data-act="clearF">Limpiar todo</button>`:'<span class="fine">Sin filtros activos</span>'}
+function cardHtml(p){const lst=p.list?`<span class="fine">Precio de lista: <s>${money(p.list)}</s> · Ahorras ${Math.round((1-p.price/p.list)*100)} %</span>`:'';
+ return `<article class="rc"><div class="pimg">${headphones(p.cols[0][1])}</div><div class="meta">
+ ${p.sponsored?'<span class="chip spon" data-imp="10" data-o="adi">Patrocinado</span>':''}
+ <h3><a data-act="go" data-arg="producto-${p.id}" href="#producto-${p.id}">${esc(p.name)}</a></h3>
+ <div class="fine"><span class="stars">${stars(p.rating)}</span> ${p.rating} · ${p.reviews.toLocaleString('es-MX')} calificaciones${p.real?'':'*'}</div>
+ <div class="price" style="font-size:22px">${money(p.price)}${p.real?'':'*'}</div>${lst}
+ <div>${p.amazon?(p.prime?'<span class="chip ok">✓ Prime</span> ':'')+'<span class="ok">Envío GRATIS</span>':`<b>Envío ${money(EXT_SHIP)}*</b> <span class="fine">· sin Prime</span>`}</div>
+ <div data-imp="3" data-o="doc"><span class="sell${p.amazon?'':' ext'}">${p.amazon?'Vendido por Amazon México':`Vendedor externo: ${esc(p.seller)} · ★ ${p.sr}* (${p.sp} % positivas)`}</span></div>
+ <label class="fine" style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-ch="cmp" value="${p.id}" ${S.cmp.includes(p.id)?'checked':''}> Comparar</label>
+ </div></article>`}
+function listHtml(){const r=results();
+ const cmp=S.cmp.length?`<div class="cmpbar" data-imp="17" data-o="adi"><span><b>${S.cmp.length}</b> para comparar (máx. 3)</span><div class="row"><button class="btn primary sm" data-act="cmpOpen" ${S.cmp.length<2?'disabled':''}>Comparar</button><button class="btn second sm" data-act="cmpClear">Quitar</button></div></div>`:'';
+ if(!r.length)return `<div class="empty" role="status" data-imp="16" data-o="adi"><b>No hay productos con estos filtros${S.q?` para «${esc(S.q)}»`:''}.</b><span>Prueba quitando algún filtro o buscando «audífonos».</span><div class="row"><button class="btn primary sm" data-act="clearF">Limpiar filtros</button><button class="btn second sm" data-act="clearQ">Ver todos los audífonos</button></div></div>`;
+ return `<div class="list">${r.map(cardHtml).join('')}</div>${cmp}<p class="fine">* Precios, calificaciones y vendedores de los productos distintos del Sony WH-CH520 son ilustrativos.</p>`}
+function vRes(){const brands=[...new Set(P.map(p=>p.brand))].sort(),types=[...new Set(P.map(p=>p.type))];const f=S.f;
+ const fs=`<aside class="filters" aria-label="Filtros" data-imp="4" data-o="der">
+ <fieldset><legend>Marca</legend>${brands.map(b=>`<label><input type="checkbox" data-ch="brand" value="${b}" ${f.brand.includes(b)?'checked':''}>${b}</label>`).join('')}</fieldset>
+ <fieldset><legend>Tipo</legend>${types.map(b=>`<label><input type="checkbox" data-ch="type" value="${b}" ${f.type.includes(b)?'checked':''}>${b}</label>`).join('')}</fieldset>
+ <fieldset><legend>Precio</legend><label><input type="radio" name="pr" data-ch="price" value="" ${!f.price?'checked':''}>Cualquiera</label>${Object.entries(PR).map(([k,v])=>`<label><input type="radio" name="pr" data-ch="price" value="${k}" ${f.price===k?'checked':''}>${v}</label>`).join('')}</fieldset>
+ <fieldset><legend>Calificación</legend><label><input type="radio" name="rt" data-ch="rating" value="0" ${!f.rating?'checked':''}>Todas</label><label><input type="radio" name="rt" data-ch="rating" value="4" ${f.rating===4?'checked':''}>4 estrellas o más</label><label><input type="radio" name="rt" data-ch="rating" value="4.5" ${f.rating===4.5?'checked':''}>4.5 estrellas o más</label></fieldset>
+ <fieldset><legend>Envío y vendedor</legend><label><input type="checkbox" data-ch="prime" ${f.prime?'checked':''}>Envío Prime</label><label><input type="checkbox" data-ch="amazon" ${f.amazon?'checked':''}>Vendido por Amazon México</label></fieldset></aside>`;
+ return `<div class="crumbs"><a data-act="go" data-arg="inicio" href="#inicio">Inicio</a> › Audio › Audífonos</div>
+ <div class="res">${fs}<section><div class="bar2"><h1 id="resT" style="margin:0;font-size:20px"></h1><label>Ordenar por <select id="sort" data-ch="sort"><option value="rel" ${S.sort==='rel'?'selected':''}>Relevancia</option><option value="pa" ${S.sort==='pa'?'selected':''}>Precio: menor a mayor</option><option value="pd" ${S.sort==='pd'?'selected':''}>Precio: mayor a menor</option><option value="cal" ${S.sort==='cal'?'selected':''}>Calificación</option></select></label></div>
+ <div class="chips" id="chips" aria-label="Filtros activos" data-imp="4" data-o="der"></div><div id="resList" aria-live="polite"></div></section></div>`}
+function updRes(){const t=$('#resT');if(!t)return;const n=results().length;t.textContent=`${n} ${n===1?'resultado':'resultados'}${S.q?` para «${S.q}»`:''}`;$('#chips').innerHTML=chipsHtml();$('#resList').innerHTML=listHtml();decorate()}
+
+/* ---------- Ficha ---------- */
+function vProd(id){const p=pid(id);S.recent=[id,...S.recent.filter(x=>x!==id)].slice(0,5);
+ if(S.pr.id!==id){S.pr={id,color:0,qty:1,plan:0};S.added=null}
+ const c=p.cols[S.pr.color]||p.cols[0],unit=p.price+PLAN[S.pr.plan].p,d=dets([{pid:id,plan:S.pr.plan,qty:S.pr.qty}],S.ship==='prime'&&p.prime?'prime':'std');
+ const primeOpt=p.prime;
+ const ship=`<div class="opts hl2" role="radiogroup" aria-labelledby="shipL" data-imp="2" data-o="doc"><div class="lbl" id="shipL">Elige tu envío</div>
+  <label class="opt"><input type="radio" name="ship" data-k="shs" data-ch="ship" value="std" ${S.ship==='std'||!primeOpt?'checked':''}><div><b>Envío estándar · ${shipCost(p)?money(shipCost(p)):'GRATIS'}</b><span>Llega el ${SHIPD.std}</span></div></label>
+  ${primeOpt?`<label class="opt"><input type="radio" name="ship" data-k="shp" data-ch="ship" value="prime" ${S.ship==='prime'?'checked':''}><div><b>Envío Prime · GRATIS</b><span>Llega ${SHIPD.prime}</span><small>Requiere Prime. Prueba gratuita; después, cargo recurrente con el costo visible antes de aceptar. Cancela en 2 pasos.</small></div></label>
+  ${S.ship==='prime'?`<div class="prime">${S.prime?`<span class="chip ok">✓ Prime activo</span> <button class="link" data-act="primeManage">Cancelar Prime en 2 pasos</button>`:`<b>Prime no está activo en tu cuenta.</b><span>Revisa las condiciones antes de decidir. No se activa nada hasta que lo confirmes.</span><div class="row"><button class="btn primary sm" data-act="primeInfo">Ver condiciones de Prime</button><button class="btn second sm" data-act="shipStd">Quedarme con envío estándar</button></div>`}</div>`:''}`:`<p class="fine" style="margin:0">Este vendedor no ofrece envío Prime.</p>`}</div>`;
+ const seller=`<div class="seller${p.amazon?'':' ext'}" data-imp="3" data-o="doc"><div class="lbl">${p.amazon?'Quién vende y quién envía':'⚠ Vendedor externo'}</div><dl>
+  <div><dt>Vendido por</dt><dd>${esc(p.seller)}</dd></div><div><dt>Enviado por</dt><dd>${esc(p.seller)}</dd></div>
+  <div><dt>Calificación del vendedor</dt><dd>★ ${p.sr} · ${p.sp} % de opiniones positivas*</dd></div>
+  <div><dt>Devoluciones</dt><dd>Hasta el 31 de enero de 2027</dd></div><div><dt>Garantía</dt><dd>12 meses del fabricante*</dd></div></dl>
+  <button class="link" style="font-size:13px" data-act="helpQuick">Ver política completa de devoluciones y garantía</button></div>`;
+ const added=S.added===id?`<div class="banner" role="status" data-imp="6" data-o="der"><h2>✓ Agregado al carrito</h2><div class="row"><button class="btn primary sm" data-act="go" data-arg="carrito">Ver carrito (${count()})</button><button class="btn second sm" data-act="dismissAdded">Seguir comprando</button></div>
+  <details><summary>Comprados juntos habitualmente (opcional)</summary><div class="together" style="margin-top:8px">${P.filter(x=>x.id!==id&&x.amazon).slice(0,2).map(x=>`<div class="row" style="align-items:center;justify-content:space-between"><span>${esc(x.short)} · ${money(x.price)}</span><button class="btn second sm" data-act="addOther" data-arg="${x.id}">Agregar</button></div>`).join('')}</div></details></div>`:'';
+ const fr=REV.filter(r=>(!S.rev.st||r.st===+S.rev.st)&&(!S.rev.ph||r.ph));
+ return `<div class="crumbs"><button class="link" data-act="back">← Volver</button> · <a data-act="go" data-arg="resultados" href="#resultados">Audífonos</a> › ${esc(p.short)}</div>${added}
+ <div class="product">
+ <section class="gal"><div class="pimg">${headphones(c[1])}</div></section>
+ <section class="info"><h1>${esc(p.name)}</h1><p class="rate"><span class="stars">${stars(p.rating)}</span> ${p.rating} · <a href="#resenas" data-act="toRev">${p.reviews.toLocaleString('es-MX')} calificaciones</a></p><hr>
+  <div class="price big-price">${money(p.price)}${p.real?'':'*'}</div>
+  ${p.cols.length>1?`<div class="lbl">Color: ${c[0]}</div><div class="swatches" role="group" aria-label="Color">${p.cols.map((x,i)=>`<button class="sw2" data-k="c${i}" data-act="color" data-arg="${i}" style="background:${x[1]}" aria-label="${x[0]}" aria-pressed="${i===S.pr.color}"></button>`).join('')}</div>`:`<div class="lbl">Color: ${c[0]}</div>`}
+  <h3>Lo que debes saber</h3><ul>${p.feat.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>
+  <p style="margin-top:16px"><button class="link" data-imp="9" data-o="der" data-act="helpQuick">¿Dudas sobre entrega, vendedor o devoluciones? Ayuda rápida</button></p></section>
+ <aside class="buy" data-imp="1" data-o="doc" aria-label="Caja de compra">
+  <div><div class="p">${money(p.price)}${p.real?'':'*'}</div><div class="ok" style="font-size:16px">Disponible</div></div>
+  ${ship}
+  <div class="qty"><span>Cantidad:</span><div class="step"><button data-k="qm" data-act="qty" data-arg="-1" aria-label="Disminuir cantidad" ${S.pr.qty<=1?'disabled':''}>−</button><output aria-live="polite">${S.pr.qty}</output><button data-k="qp" data-act="qty" data-arg="1" aria-label="Aumentar cantidad">+</button></div>${S.pr.qty>=MAXQ?`<span class="err" data-imp="16" data-o="adi">Máximo ${MAXQ} por pedido.</span>`:''}</div>
+  <div class="total-line" data-imp="7" data-o="der">Total estimado: <b>${money(d.total)}</b> · envío ${d.ship?money(d.ship):'GRATIS'} · impuestos incluidos</div>
+  <div style="display:grid;gap:10px"><button class="btn primary" data-act="add">Agregar al carrito</button><button class="btn second" data-imp="13" data-o="adi" data-act="buyNow">Comprar ahora</button></div>
+  ${seller}
+  <div class="acc" data-open="${S.accOpen}"><button data-k="acc" data-act="acc" aria-expanded="${S.accOpen}"><span><b>Protección, usados y otras ofertas</b><small>Plan de protección · Usado desde $591.82 · Otros vendedores (8)</small></span><span class="caret">▸</span></button>
+  ${S.accOpen?`<div class="body"><div class="opts" role="radiogroup" aria-label="Plan de protección"><div class="lbl">Plan de protección (opcional)</div>${[0,2,3,4].map(k=>`<label class="opt"><input type="radio" name="plan" data-k="pl${k}" data-ch="plan" value="${k}" ${S.pr.plan===k?'checked':''}><div><b>${k?k+' años · '+money(PLAN[k].p):'Sin plan de protección'}</b>${k?'<small>Assurant · daños accidentales</small>':''}</div></label>`).join('')}</div>
+  <div class="mini"><div class="lbl">Usado: Como nuevo</div><b style="font-size:16px">$591.82</b><div class="who"><span>Enviado por</span><b>Amazon</b><span>Vendido por</span><b>Amazon Remates de Almacén</b></div></div>
+  <div class="mini"><div class="lbl">Otros vendedores (8)</div><span>Nuevo y usado desde $579.36 · Entrega GRATIS</span></div></div>`:''}</div>
+  <p class="fine" style="margin:0">* Datos ilustrativos de la propuesta.</p></aside></div>
+ <section class="detail" id="resenas"><div class="card" data-imp="11" data-o="adi"><h3>Reseñas de clientes</h3><div class="price" style="font-size:28px">${p.rating} de 5</div><span class="fine">${p.reviews.toLocaleString('es-MX')} calificaciones</span>
+  <div class="bars" aria-label="Distribución ilustrativa">${[['5',88],['4',8],['3',2],['2',1],['1',1]].map(x=>`<div class="bar"><span>${x[0]} ★</span><i style="--w:${x[1]}%"></i><span>${x[1]} %</span></div>`).join('')}</div>
+  <div class="row"><label>Estrellas <select data-ch="revst"><option value="0">Todas</option>${[5,4,3].map(s=>`<option value="${s}" ${+S.rev.st===s?'selected':''}>${s}</option>`).join('')}</select></label><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-ch="revph" ${S.rev.ph?'checked':''}>Con fotos</label></div>
+  <div aria-live="polite">${fr.length?fr.map(r=>`<div class="rv"><b>${'★'.repeat(r.st)} ${esc(r.t)}</b><span>${esc(r.b)}</span><span class="fine">${esc(r.u)} · ${r.d}${r.v?' · <span class="ok">Compra verificada</span>':''}${r.ph?' · 📷 con fotos':''}</span></div>`).join(''):'<div class="empty">No hay reseñas con ese filtro. <button class="link" data-act="revReset">Quitar filtros</button></div>'}</div><span class="fine">Reseñas de ejemplo.</span></div>
+  <div class="card"><h3>Preguntas y respuestas</h3><input id="qaIn" type="search" placeholder="Busca una respuesta o pregunta algo" aria-label="Buscar en preguntas"><ul id="qaList" style="list-style:none;margin:0;padding:0;display:grid;gap:10px"></ul><span class="fine">Preguntas de ejemplo.</span></div></section>
+ <div class="sticky-bar" data-imp="15" data-o="adi"><div class="price" style="font-size:18px">${money(d.total)}</div><button class="btn primary" data-act="add">Agregar al carrito</button></div>`}
+const QA=[['¿Se puede usar mientras se carga?','Depende del modelo; revisa la ficha del fabricante.'],['¿Incluye cable de carga?','Incluye cable USB-C.'],['¿Se conecta a dos dispositivos?','Consulta la descripción del fabricante.']];
+function qa(){const el=$('#qaList');if(!el)return;const f=norm($('#qaIn').value);const r=QA.filter(x=>norm(x[0]+x[1]).includes(f));el.innerHTML=r.length?r.map(x=>`<li><b>${x[0]}</b><br><span class="fine">${x[1]}</span></li>`).join(''):'<li class="fine">Sin resultados. Puedes enviar tu pregunta (simulado).</li>'}
+function addLine(item){const l=S.cart.find(x=>x.pid===item.pid&&x.plan===item.plan&&x.color===item.color);if(l)l.qty=Math.min(MAXQ,l.qty+item.qty);else S.cart.push({...item})}
+function needPrime(){if(S.ship==='prime'&&pid(S.pr.id).prime&&!S.prime){toast('Para usar envío Prime, revisa y activa Prime, o elige envío estándar.');return true}return false}
+
+/* ---------- Carrito ---------- */
+function vCart(){const d=dets(S.cart,S.ship);
+ const lines=S.cart.map((l,i)=>{const p=pid(l.pid);return `<div class="line"><div class="pimg">${headphones(p.cols[l.color][1])}</div><div><b><a data-act="go" data-arg="producto-${p.id}" href="#producto-${p.id}">${esc(p.short)}</a></b><small>Color: ${p.cols[l.color][0]} · ${PLAN[l.plan].n}</small><small>Vendido por ${esc(p.seller)}</small><div class="acts"><div class="step"><button data-k="m${i}" data-act="cq" data-arg="${i}:-1" aria-label="Disminuir">−</button><output>${l.qty}</output><button data-k="p${i}" data-act="cq" data-arg="${i}:1" aria-label="Aumentar" ${l.qty>=MAXQ?'disabled':''}>+</button></div><button class="link" data-act="rm" data-arg="${i}">Eliminar</button><button class="link" data-act="save" data-arg="${i}">Guardar para después</button></div></div><div class="price">${money((p.price+PLAN[l.plan].p)*l.qty)}</div></div>`}).join('');
+ const sv=S.saved.length?`<h2 style="margin-top:24px">Guardados para después</h2>${S.saved.map((l,i)=>`<div class="line"><div class="pimg">${headphones(pid(l.pid).cols[l.color][1])}</div><div><b>${esc(pid(l.pid).short)}</b><div class="acts"><button class="link" data-act="unsave" data-arg="${i}">Mover al carrito</button></div></div><div class="price">${money(pid(l.pid).price)}</div></div>`).join('')}`:'';
+ return `<div class="crumbs"><button class="link" data-act="back">← Seguir comprando</button></div><h1>Tu carrito</h1>
+ ${S.cart.length?`<div class="cols"><section data-imp="5" data-o="der">${lines}${sv}</section><aside class="card" data-imp="7" data-o="der"><div class="tot">${tot(d)}</div>${d.notes.map(n=>`<span class="fine">${esc(n)}</span>`).join('')}<button class="btn primary" data-act="checkout">Proceder al pago</button><span class="fine">Prototipo: no se realiza ningún cobro.</span></aside></div>`
+ :`<div class="empty" data-imp="16" data-o="adi"><b>Tu carrito está vacío.</b><span>Agrega productos desde los resultados.</span><button class="btn primary sm" data-act="go" data-arg="resultados">Buscar audífonos</button></div>${sv}`}`}
+
+/* ---------- Pago ---------- */
+function vPay(){const ls=coLines();if(!ls.length)return `<div class="empty" style="margin-top:20px"><b>No hay nada que pagar.</b><button class="btn primary sm" data-act="go" data-arg="resultados">Buscar audífonos</button></div>`;
+ const d=dets(ls,S.ship),sn=['Dirección','Envío y pago','Revisar y confirmar'];
+ const prog=`<div class="prog" data-imp="12" data-o="adi" role="list">${sn.map((n,i)=>`<button role="listitem" class="${S.step>i+1?'done':''}" ${S.step===i+1?'aria-current="step"':''} data-act="step" data-arg="${i+1}">${S.step>i+1?'✓ ':''}${i+1}. ${n}</button>`).join('')}</div>`;
+ let body='';
+ if(S.step===1)body=`<div class="card"><h2>Dirección de entrega</h2><div class="opts" role="radiogroup" aria-label="Dirección"><label class="opt"><input type="radio" name="ad" data-ch="addr" value="0" ${S.addr===0?'checked':''}><div><b>Casa</b><span>Puebla City, 72580</span></div></label><label class="opt"><input type="radio" name="ad" data-ch="addr" value="1" ${S.addr===1?'checked':''}><div><b>Agregar una dirección nueva</b></div></label></div>
+ ${S.addr===1?`<div class="field" data-imp="16" data-o="adi"><label for="cp">Código postal</label><input id="cp" type="text" inputmode="numeric" maxlength="5" value="${esc(S.cp)}" aria-describedby="cpE" data-ch="cp">${S.cp&&!/^\d{5}$/.test(S.cp)?`<span class="err" id="cpE" role="alert">El código postal debe tener 5 dígitos, por ejemplo 72580.</span>`:'<span class="fine" id="cpE">5 dígitos.</span>'}</div>`:''}
+ <button class="btn primary sm" data-act="stepNext" ${S.addr===1&&!/^\d{5}$/.test(S.cp)?'disabled':''}>Continuar</button></div>`;
+ else if(S.step===2)body=`<div class="card"><h2>Envío</h2><div class="opts" role="radiogroup" aria-label="Envío" data-imp="2" data-o="doc"><label class="opt"><input type="radio" name="sh" data-ch="shipCk" value="std" ${S.ship==='std'?'checked':''}><div><b>Envío estándar</b><span>Llega el ${SHIPD.std}</span></div></label><label class="opt"><input type="radio" name="sh" data-ch="shipCk" value="prime" ${S.ship==='prime'?'checked':''}><div><b>Envío Prime · GRATIS</b><span>Llega ${SHIPD.prime}</span><small>Requiere Prime; las condiciones se muestran antes de activarlo.</small></div></label></div>
+ ${S.ship==='prime'&&!S.prime?`<div class="prime"><b>Prime no está activo.</b><div class="row"><button class="btn primary sm" data-act="primeInfo">Ver condiciones de Prime</button><button class="btn second sm" data-act="shipStd">Usar envío estándar</button></div></div>`:''}
+ <h2 style="margin-top:8px">Método de pago</h2><div class="opts" role="radiogroup" aria-label="Pago">${[['card','Tarjeta de crédito o débito (simulada)'],['oxxo','Pago en tienda (simulado)'],['saldo','Saldo en cuenta (simulado)']].map(x=>`<label class="opt"><input type="radio" name="py" data-ch="pay" value="${x[0]}" ${S.pay===x[0]?'checked':''}><div><b>${x[1]}</b></div></label>`).join('')}</div>
+ <p class="fine" style="margin:0">No se solicitan datos de tarjeta en este prototipo.</p><button class="btn primary sm" data-act="stepNext" ${S.ship==='prime'&&!S.prime?'disabled':''}>Continuar</button></div>`;
+ else body=`<div class="card" data-imp="13" data-o="adi"><h2>Revisa tu pedido</h2>${ls.map(l=>{const p=pid(l.pid);return `<div class="row" style="justify-content:space-between"><span>${esc(p.short)} × ${l.qty}${l.plan?' + '+PLAN[l.plan].n:''}</span><b>${money((p.price+PLAN[l.plan].p)*l.qty)}</b></div>`}).join('')}<hr>
+ <div class="row" style="justify-content:space-between"><span><b>Entrega:</b> ${S.addr===1?'CP '+esc(S.cp):'Casa · Puebla City, 72580'}</span><button class="link" data-act="step" data-arg="1">Cambiar</button></div>
+ <div class="row" style="justify-content:space-between"><span><b>Envío:</b> ${S.ship==='prime'?'Prime, llega '+SHIPD.prime:'Estándar, llega '+SHIPD.std}</span><button class="link" data-act="step" data-arg="2">Cambiar</button></div>
+ <div class="row" style="justify-content:space-between"><span><b>Pago:</b> ${({card:'Tarjeta (simulada)',oxxo:'Pago en tienda (simulado)',saldo:'Saldo en cuenta (simulado)'})[S.pay]}</span><button class="link" data-act="step" data-arg="2">Cambiar</button></div>
+ <div class="tot">${tot(d)}</div><button class="btn primary" data-act="confirm">Confirmar pedido (simulado)</button><span class="fine">Podrás cancelarlo mientras esté en preparación. No se realiza ningún cobro.</span></div>`;
+ return `<div class="crumbs"><button class="link" data-act="${S.buyNow?'backBuy':'go'}" data-arg="carrito">← ${S.buyNow?'Volver a la ficha':'Volver al carrito'}</button></div><h1>Pago</h1>${prog}<div class="cols"><section>${body}</section><aside class="card" data-imp="7" data-o="der"><h3>Resumen</h3><div class="tot">${tot(d)}</div>${d.notes.map(n=>`<span class="fine">${esc(n)}</span>`).join('')}</aside></div>`}
+function vConf(){const o=S.lastOrder;if(!o)return `<div class="empty" style="margin-top:20px"><b>No hay un pedido reciente.</b><button class="btn primary sm" data-act="go" data-arg="pedidos">Ver mis pedidos</button></div>`;
+ return `<div class="banner" style="margin-top:20px" role="status"><h2>✓ Pedido confirmado (simulado)</h2><span>Número ${o.id} · Llega ${o.eta}. Total ${money(o.total)} con impuestos incluidos. No se realizó ningún cargo.</span><div class="row"><button class="btn primary sm" data-act="go" data-arg="pedidos">Ver el seguimiento</button><button class="btn second sm" data-act="go" data-arg="resultados">Seguir comprando</button></div></div>`}
+
+/* ---------- Pedidos ---------- */
+function vOrders(){return `<div class="crumbs"><button class="link" data-act="back">← Volver</button></div><h1>Mis pedidos</h1><div class="list" data-imp="8" data-o="der">${S.orders.length?S.orders.map((o,i)=>`<article class="card"><div class="row" style="justify-content:space-between"><b>Pedido ${o.id}</b><span class="fine">${o.date}${o.demo?' · ejemplo':''}</span></div><span>${esc(o.items)} · ${money(o.total)}</span>
+  ${o.cancel?'<span class="bad">Pedido cancelado</span>':`<div class="tl" role="list" aria-label="Estado del pedido">${STAGES.map((s,k)=>`<div class="${k<=o.stage?'on':''}" role="listitem">${s}</div>`).join('')}</div><span><b>${o.stage===3?'Entregado el':'Llega el'}</b> ${o.eta}</span>`}
+  ${o.ret?'<span class="ok">Devolución iniciada (simulada)</span>':''}
+  <div class="row">${!o.cancel&&o.stage<=1?`<button class="btn second sm" data-act="cancelOrder" data-arg="${i}">Cancelar pedido</button>`:''}${!o.cancel&&o.stage===3&&!o.ret?`<button class="btn second sm" data-act="returnOrder" data-arg="${i}">Devolver o reemplazar</button>`:''}${!o.cancel&&o.stage<3?`<button class="btn second sm" data-act="advance" data-arg="${i}">Avanzar etapa (demo)</button>`:''}</div></article>`).join(''):'<div class="empty">Aún no tienes pedidos.</div>'}</div>`}
+
+/* ---------- Ayuda ---------- */
+const HELP={entrega:['Entrega','La fecha estimada se muestra en la ficha, el carrito y el pago, y es la misma en los tres lugares. Puedes cambiar la dirección antes de confirmar el pedido.'],vendedor:['Vendedores','«Amazon México» vende y envía directamente. Un «Vendedor externo» aparece con su nombre, calificación y porcentaje de opiniones positivas antes de comprar.'],devol:['Devoluciones','El plazo se muestra en cada ficha (por ejemplo, hasta el 31 de enero de 2027 en el producto observado). Desde «Mis pedidos» puedes iniciar la devolución de un pedido entregado.'],prime:['Prime','Prime no se activa sin confirmación. Antes de aceptar ves la prueba gratuita, el cargo posterior y la renovación; puedes cancelar en 2 pasos desde «Cuenta y listas».']};
+function vHelp(){const t=HELP[S.helpTab];return `<div class="crumbs"><button class="link" data-imp="9" data-o="der" data-act="back">← Volver a lo que estabas haciendo</button></div><h1>Centro de ayuda</h1>
+ <div class="tabs" role="tablist">${Object.entries(HELP).map(([k,v])=>`<button role="tab" aria-selected="${S.helpTab===k}" data-act="helpTab" data-arg="${k}">${v[0]}</button>`).join('')}</div>
+ <div class="card"><h2>${t[0]}</h2><p style="margin:0;max-width:70ch">${t[1]}</p></div><p class="fine">Contenido de ejemplo para el prototipo.</p>`}
+
+/* ---------- Catálogo ---------- */
+function vImps(){const L=IMPS.filter(i=>S.impF==='todas'||i.o===S.impF);
+ return `<div class="crumbs"><button class="link" data-act="back">← Volver</button></div><h1>Catálogo de mejoras propuestas</h1>
+ <p style="max-width:80ch;margin:0 0 12px">Los documentos del equipo formulan tres problemas (mejoras 1 a 3). Las demás se derivan de la auditoría (alcance y tareas), de los perfiles de usuario o son adicionales del análisis. Son hipótesis de diseño: ninguna se ha validado con usuarios y la prioridad debe confirmarse con la evaluación.</p>
+ <div class="tabs" role="tablist">${[['todas','Todas ('+IMPS.length+')'],['doc',O.doc],['der',O.der],['adi',O.adi]].map(x=>`<button role="tab" aria-selected="${S.impF===x[0]}" data-act="impF" data-arg="${x[0]}">${x[1]}</button>`).join('')}</div>
+ <div class="imps">${L.map(i=>`<article class="imp"><div class="h"><span class="nb ${i.o}">${i.n}</span><h3>${i.t}</h3></div><span class="chip">${O[i.o]}</span><dl><dt>Heurísticas</dt><dd>${i.h}</dd><dt>Situación</dt><dd>${i.a}</dd><dt>Propuesta</dt><dd>${i.d}</dd><dt>Cómo verificarlo</dt><dd>${i.v}</dd></dl><button class="btn second sm" data-act="impGo" data-arg="${i.n}">Ver en el prototipo</button></article>`).join('')}</div>
+ <h2 style="margin-top:28px">Referencias (APA 7.ª edición)</h2><p class="fine" style="max-width:90ch;line-height:1.7">Gray, C. M., Kou, Y., Battles, B., Hoggatt, J., &amp; Toombs, A. L. (2018). The dark (patterns) side of UX design. <i>CHI 2018</i> (Paper 534). ACM. https://doi.org/10.1145/3173574.3174108<br>Iyengar, S. S., &amp; Lepper, M. R. (2000). When choice is demotivating. <i>Journal of Personality and Social Psychology, 79</i>(6), 995–1006. https://doi.org/10.1037/0022-3514.79.6.995<br>Mathur, A., et al. (2019). Dark patterns at scale. <i>Proceedings of the ACM on Human-Computer Interaction, 3</i>(CSCW), Article 81. https://doi.org/10.1145/3359183<br>Nielsen, J. (s. f.). <i>10 usability heuristics for user interface design</i>. Nielsen Norman Group. https://www.nngroup.com/articles/ten-usability-heuristics/<br>World Wide Web Consortium. (2023). <i>Web content accessibility guidelines (WCAG) 2.2</i>. https://www.w3.org/TR/WCAG22/</p>`}
+
+/* ---------- Eventos ---------- */
+const primeInfo=()=>modal(`<h2>Antes de activar Prime</h2><ul><li><b>Prueba gratuita</b>: sin cargo durante el periodo de prueba.</li><li><b>Después</b>: se cobra la tarifa vigente de Prime, que verás aquí antes de confirmar.</li><li><b>Renovación automática</b> hasta que canceles.</li><li><b>Cancelar</b> toma 2 pasos desde «Cuenta y listas».</li></ul><div class="acts"><button class="btn primary" data-act="primeYes">Activar prueba gratuita</button><button class="btn second" data-act="close">No, gracias</button></div><p class="fine">Simulación: no se activa ninguna suscripción real.</p>`);
+function cancelStep(n){const T={1:['Tu suscripción a Prime','Prueba gratuita activa. Si cancelas, pierdes el envío Prime en tus próximos pedidos.','<button class="btn second" data-act="close">Conservar Prime</button><button class="btn second" data-act="cancel2">Continuar con la cancelación</button>'],2:['Confirma la cancelación','Se cancelará tu suscripción y no habrá cargos posteriores. Puedes volver a activar Prime cuando quieras.','<button class="btn second" data-act="close">Conservar Prime</button><button class="btn primary" data-act="cancel3">Sí, cancelar Prime</button>'],3:['Prime cancelado','Tu suscripción terminó (simulado). No se hará ningún cargo.','<button class="btn second" data-act="close">Cerrar</button>']}[n];
+ modal(`<div class="steps"><span class="${n===1?'on':''}">Paso 1 de 2</span><span class="${n>=2?'on':''}">Paso 2 de 2</span></div><h2>${T[0]}</h2><p style="margin:0">${T[1]}</p><div class="acts">${T[2]}</div>`)}
+function helpQuick(){modal(`<h2>Ayuda rápida</h2><div class="opts">${Object.entries(HELP).map(([k,v])=>`<details class="opt" style="display:block"><summary><b>${v[0]}</b></summary><p style="margin:8px 0 0">${v[1]}</p></details>`).join('')}</div><div class="acts"><button class="btn second" data-act="close">Volver a la compra</button><button class="btn second" data-act="go" data-arg="ayuda">Abrir el centro de ayuda</button></div>`)}
+function impModal(n){const i=imp(n);modal(`<div class="row" style="align-items:center;justify-content:space-between"><div class="row" style="align-items:center"><span class="nb ${i.o}">${i.n}</span><h2>${i.t}</h2></div><button class="xbtn" data-act="close" aria-label="Cerrar">×</button></div><span class="chip">${O[i.o]}</span><div class="imp" style="border:0;padding:0"><dl><dt>Heurísticas</dt><dd>${i.h}</dd><dt>Situación</dt><dd>${i.a}</dd><dt>Propuesta</dt><dd>${i.d}</dd><dt>Cómo verificarlo</dt><dd>${i.v}</dd></dl></div><div class="acts"><button class="btn second" data-act="close">Cerrar</button><button class="btn second" data-act="go" data-arg="mejoras">Ver el catálogo</button></div>`)}
+function cmpModal(){const r=S.cmp.map(pid);modal(`<div class="row" style="justify-content:space-between;align-items:center"><h2>Comparar productos</h2><button class="xbtn" data-act="close" aria-label="Cerrar">×</button></div><div class="tbl"><table><thead><tr><th></th>${r.map(p=>`<th>${esc(p.short)}</th>`).join('')}</tr></thead><tbody>${[['Precio',p=>money(p.price)],['Calificación',p=>p.rating+' ('+p.reviews.toLocaleString('es-MX')+')'],['Tipo',p=>p.type],['Vendido por',p=>p.amazon?'Amazon México':'Vendedor externo: '+p.seller],['Calificación del vendedor',p=>'★ '+p.sr+' · '+p.sp+' %'],['Envío',p=>p.amazon?'GRATIS':money(EXT_SHIP)],['Prime',p=>p.prime?'Sí':'No']].map(x=>`<tr><th>${x[0]}</th>${r.map(p=>`<td>${x[1](p)}</td>`).join('')}</tr>`).join('')}</tbody></table></div><p class="fine">Datos distintos del Sony WH-CH520 ilustrativos.</p>`,true)}
+
+const A={
+ go:a=>{closeModal();$('#accMenu').hidden=true;go(a)},
+ back:()=>{const t=home();go(t)},
+ backBuy:()=>{S.buyNow=null;go('producto-'+S.pr.id)},
+ stub:()=>toast('Esta sección no forma parte del prototipo.'),
+ skip:()=>$('#app').focus(),
+ theme:()=>{const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark';$('#accMenu').hidden=true},
+ menu:()=>modal(`<div class="row" style="justify-content:space-between;align-items:center"><h2>Todo</h2><button class="xbtn" data-act="close" aria-label="Cerrar">×</button></div>${[['Tendencias',['Los más vendidos','Nuevos lanzamientos']],['Contenido digital y dispositivos',['Prime Video','Echo y Alexa']],['Comprar por departamento',['Electrónicos › Audio › Audífonos','Hogar','Cómputo']],['Programas y características',['Tarjetas de regalo','Amazon Super']]].map(g=>`<div><div class="lbl">${g[0]}</div><div class="opts" style="margin:6px 0 12px">${g[1].map(x=>x.includes('Audífonos')?`<button class="opt" data-act="go" data-arg="resultados">${x}</button>`:`<button class="opt" data-act="stub">${x}</button>`).join('')}</div></div>`).join('')}`),
+ close:closeModal,ovclose:(a,e)=>{if(e.target.classList.contains('overlay'))closeModal();else return 'x'},
+ showOn:()=>{$('#tg').checked=true;document.body.classList.add('show')},
+ imp:a=>impModal(+a),impGo:a=>{const i=imp(+a);closeModal();S.impF='todas';go(i.r);$('#tg').checked=true;document.body.classList.add('show')},
+ impF:a=>{S.impF=a;render(true)},helpTab:a=>{S.helpTab=a;render(true)},helpQuick,
+ rmf:a=>{const [k,v]=a.split(':');if(k==='brand'||k==='type')S.f[k]=S.f[k].filter(x=>x!==v);else if(k==='price')S.f.price='';else if(k==='rating')S.f.rating=0;else S.f[k]=false;rebuildFilters()},
+ clearF:()=>{S.f={brand:[],type:[],price:'',rating:0,prime:false,amazon:false};rebuildFilters()},
+ clearQ:()=>{S.q='';$('#q').value='';A.clearF()},
+ cmpOpen:cmpModal,cmpClear:()=>{S.cmp=[];updRes()},
+ color:a=>{S.pr.color=+a;render(true)},qty:a=>{S.pr.qty=Math.max(1,Math.min(MAXQ,S.pr.qty+ +a));render(true)},
+ acc:()=>{S.accOpen=!S.accOpen;render(true)},toRev:(a,e)=>{e.preventDefault();const r=$('#resenas');if(r)r.scrollIntoView({behavior:'smooth'})},
+ shipStd:()=>{S.ship='std';render(true)},primeInfo,
+ primeYes:()=>{S.prime=true;closeModal();render(true);toast('Prime activado (simulado). Puedes cancelarlo en 2 pasos.')},
+ primeManage:()=>{$('#accMenu').hidden=true;if(!S.prime){toast('Prime no está activo.');return}cancelStep(1)},
+ cancel2:()=>cancelStep(2),cancel3:()=>{S.prime=false;if(S.ship==='prime')S.ship='std';render(true);cancelStep(3)},
+ add:()=>{if(needPrime())return;const p=pid(S.pr.id);addLine({pid:p.id,color:S.pr.color,plan:S.pr.plan,qty:S.pr.qty});S.added=p.id;render(true);const b=$('.banner');if(b)b.scrollIntoView({block:'nearest'})},
+ addOther:a=>{addLine({pid:a,color:0,plan:0,qty:1});toast(pid(a).short+' agregado al carrito.');refreshHdr()},
+ dismissAdded:()=>{S.added=null;render(true)},
+ buyNow:()=>{if(needPrime())return;S.buyNow={pid:S.pr.id,color:S.pr.color,plan:S.pr.plan,qty:S.pr.qty};S.step=3;go('pago')},
+ cq:a=>{const [i,dl]=a.split(':');const l=S.cart[+i];l.qty=Math.max(1,Math.min(MAXQ,l.qty+ +dl));render(true)},
+ rm:a=>{const i=+a,l=S.cart.splice(i,1)[0];render(true);toast('Producto eliminado.','Deshacer',()=>{S.cart.splice(i,0,l);render(true)})},
+ save:a=>{S.saved.push(S.cart.splice(+a,1)[0]);render(true);toast('Guardado para después.')},unsave:a=>{S.cart.push(S.saved.splice(+a,1)[0]);render(true)},
+ checkout:()=>{S.buyNow=null;S.step=1;go('pago')},step:a=>{if(+a<=S.step||+a===S.step+1){S.step=+a;render(true)}else toast('Completa el paso anterior primero.')},
+ stepNext:()=>{S.step=Math.min(3,S.step+1);render()},
+ confirm:()=>{const ls=coLines(),d=dets(ls,S.ship);const o={id:'702-'+(5000+S.orders.length*37)+'-'+(S.orders.length+3),date:'23 nov 2026',items:ls.map(l=>pid(l.pid).short+' × '+l.qty).join(', '),total:d.total,stage:0,eta:S.ship==='prime'?'mañana, 24 de noviembre':'miércoles, 25 de noviembre'};S.orders.unshift(o);S.lastOrder=o;if(S.buyNow)S.buyNow=null;else S.cart=[];S.step=1;go('confirmacion')},
+ cancelOrder:a=>{S.orders[+a].cancel=true;render(true);toast('Pedido cancelado (simulado).')},advance:a=>{const o=S.orders[+a];o.stage=Math.min(3,o.stage+1);if(o.stage===3)o.eta='23 de noviembre';render(true)},
+ returnOrder:a=>modal(`<h2>Devolver o reemplazar</h2><div class="field"><label for="why">Motivo</label><select id="why"><option>El producto no cumple lo esperado</option><option>Llegó dañado</option><option>Pedí otro artículo</option></select></div><div class="acts"><button class="btn primary" data-act="doReturn" data-arg="${a}">Iniciar devolución (simulada)</button><button class="btn second" data-act="close">Volver</button></div>`),
+ doReturn:a=>{S.orders[+a].ret=true;closeModal();render(true);toast('Devolución iniciada (simulada).')}
+};
+function rebuildFilters(){if(S.route==='resultados'){render(true)}}
+document.addEventListener('click',e=>{
+ const m=e.target.closest('#accWrap');if(!m)$('#accMenu').hidden=true;
+ const b=e.target.closest('[data-act]');if(!b)return;
+ if(b.tagName==='A')e.preventDefault();
+ const fn=A[b.dataset.act];if(!fn)return;
+ if(b.dataset.act==='ovclose'){if(e.target.classList.contains('overlay'))closeModal();return}
+ fn(b.dataset.arg,e)});
+$('#accBtn').addEventListener('click',e=>{e.stopPropagation();const m=$('#accMenu');m.hidden=!m.hidden;$('#accBtn').setAttribute('aria-expanded',!m.hidden)});
+document.addEventListener('change',e=>{const t=e.target,k=t.dataset.ch;if(!k)return;
+ if(k==='brand'||k==='type'){const a=S.f[k],i=a.indexOf(t.value);if(t.checked&&i<0)a.push(t.value);if(!t.checked&&i>=0)a.splice(i,1);updRes()}
+ else if(k==='price'){S.f.price=t.value;updRes()}else if(k==='rating'){S.f.rating=+t.value;updRes()}
+ else if(k==='prime'||k==='amazon'){S.f[k]=t.checked;updRes()}else if(k==='sort'){S.sort=t.value;updRes()}
+ else if(k==='cmp'){if(t.checked){if(S.cmp.length>=3){t.checked=false;toast('Puedes comparar hasta 3 productos.');return}S.cmp.push(t.value)}else S.cmp=S.cmp.filter(x=>x!==t.value);updRes()}
+ else if(k==='ship'){S.ship=t.value;render(true)}else if(k==='plan'){S.pr.plan=+t.value;render(true)}
+ else if(k==='revst'){S.rev.st=+t.value;render(true)}else if(k==='revph'){S.rev.ph=t.checked;render(true)}
+ else if(k==='addr'){S.addr=+t.value;render(true)}else if(k==='shipCk'){S.ship=t.value;render(true)}else if(k==='pay'){S.pay=t.value}
+});
+document.addEventListener('input',e=>{const t=e.target;if(t.id==='qaIn')qa();if(t.dataset.ch==='cp'){S.cp=t.value;const pos=t.selectionStart;render(true);const n=$('#cp');if(n){n.focus();n.setSelectionRange(pos,pos)}}});
+$('#searchForm').addEventListener('submit',e=>{e.preventDefault();S.q=$('#q').value.trim();S.f={brand:[],type:[],price:'',rating:0,prime:false,amazon:false};go('resultados');if(location.hash==='#resultados')render()});
+$('#tg').addEventListener('change',e=>document.body.classList.toggle('show',e.target.checked));
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();$('#accMenu').hidden=true}});
+const _render=render;render=function(k){_render(k);if(S.route==='resultados')updRes();if(S.route.startsWith('producto-'))qa()};
+window.addEventListener('hashchange',()=>render());
+render();
 </script>
 </body>
 </html>
