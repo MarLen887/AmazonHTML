@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amazon México – Propuesta de rediseño</title>
+<style>:root{color-scheme:light}html{-webkit-text-size-adjust:100%}body{margin:0}[hidden]{display:none!important}</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: ficha de producto en tres columnas (galería · información · caja de compra); una columna en móvil.
+   Tokens: navy (encabezado), amarillo (CTA), verde (vendedor), azul/naranja/verde = problemas P1/P2/P3 */
+:root{
+  --bg:#ffffff; --surface:#ffffff; --soft:#f6f7f7; --ink:#0f1111; --muted:#565959; --line:#d5d9d9;
+  --nav:#131921; --nav2:#232f3e; --nav-ink:#ffffff; --nav-muted:#cfd3d3;
+  --link:#007185; --cta:#ffd814; --cta-ink:#0f1111; --ok:#067d62;
+  --seller-bg:#f0fdf4; --seller-line:#bbe5cc;
+  --p1:#2563eb; --p2:#ea580c; --p3:#16a34a;
+  --overlay:rgba(15,17,17,.55); --focus:#2563eb;
+  --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1417; --surface:#161d21; --soft:#1c262b; --ink:#eef1f1; --muted:#a9b3b5; --line:#33414a;
+  --nav:#0a0f12; --nav2:#141c21; --link:#5fc3d6; --cta:#ffd814; --cta-ink:#0f1111; --ok:#4fd1ae;
+  --seller-bg:#12261c; --seller-line:#2c5a42; --p1:#6b9bff; --p2:#ff8a4c; --p3:#4ade80; --overlay:rgba(0,0,0,.7); --focus:#8ab4ff; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1417; --surface:#161d21; --soft:#1c262b; --ink:#eef1f1; --muted:#a9b3b5; --line:#33414a;
+  --nav:#0a0f12; --nav2:#141c21; --link:#5fc3d6; --cta:#ffd814; --cta-ink:#0f1111; --ok:#4fd1ae;
+  --seller-bg:#12261c; --seller-line:#2c5a42; --p1:#6b9bff; --p2:#ff8a4c; --p3:#4ade80; --overlay:rgba(0,0,0,.7); --focus:#8ab4ff; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+.wrap{max-width:1320px;margin:0 auto}
+button{font:inherit;color:inherit;cursor:pointer}
+a,.link{color:var(--link);text-decoration:none;cursor:pointer;background:none;border:0;padding:0;font:inherit}
+.link:hover,a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+.bleed{margin-left:calc(-1*max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1*max(16px,env(safe-area-inset-right,0px)));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+/* Encabezado */
+.top{background:var(--nav);color:var(--nav-ink)}
+.top .wrap{display:flex;align-items:center;gap:20px;padding:12px 0;flex-wrap:wrap}
+.brand{font-size:22px;font-weight:700;letter-spacing:-.01em;color:var(--nav-ink)}
+.loc{font-size:12px;color:var(--nav-muted);line-height:1.2}.loc b{display:block;color:#fff;font-size:14px;font-weight:600}
+.search{flex:1 1 280px;display:flex;background:#fff;border-radius:6px;overflow:hidden;min-width:0}
+.search input{flex:1;min-width:0;border:0;padding:0 14px;height:40px;font:inherit;color:#0f1111;background:#fff}
+.search button{background:#ffa41c;border:0;padding:0 20px;font-weight:600;color:#0f1111}
+.hbtn{background:none;border:0;color:#fff;text-align:left;line-height:1.2;font-size:12px;position:relative}
+.hbtn b{display:block;font-size:14px;font-weight:600}
+.hbtn small{color:var(--nav-muted);font-size:12px}
+.cartbtn{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px}
+.cartbtn .n{background:var(--cta);color:#0f1111;border-radius:999px;min-width:22px;height:22px;display:grid;place-items:center;font-size:12px;padding:0 6px}
+.menu{position:absolute;right:0;top:calc(100% + 8px);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;min-width:240px;padding:8px;z-index:30;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.menu button{display:block;width:100%;text-align:left;background:none;border:0;padding:10px;border-radius:6px;font-size:14px;color:var(--ink)}
+.menu button:hover:not(:disabled){background:var(--soft)}.menu button:disabled{color:var(--muted);cursor:default}
+.sub{background:var(--nav2);color:#fff}
+.sub .wrap{display:flex;gap:22px;padding:8px 0;overflow-x:auto;white-space:nowrap}
+.sub button{background:none;border:0;color:#fff;font-size:14px;padding:2px 0}
+.crumbs{font-size:12px;color:var(--muted);padding:12px 0 4px}
+/* Barra de mejoras */
+.mejoras{border-bottom:1px solid var(--line);background:var(--soft)}
+.mejoras .wrap{display:flex;align-items:center;gap:14px;padding:10px 0;flex-wrap:wrap}
+.sw{display:flex;align-items:center;gap:10px;font-weight:600}
+.sw input{position:absolute;opacity:0}
+.sw .track{width:40px;height:22px;border-radius:999px;background:var(--line);position:relative;transition:background .15s}
+.sw .track::after{content:"";position:absolute;left:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}
+.sw input:checked+.track{background:var(--ok)}.sw input:checked+.track::after{transform:translateX(18px)}
+.sw input:focus-visible+.track{outline:2px solid var(--focus);outline-offset:2px}
+.mejoras .note{color:var(--muted);font-size:13px}
+.legend{display:none;gap:12px;padding:0 0 12px;grid-template-columns:repeat(3,1fr)}
+body.show .legend{display:grid}
+.legend div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;font-size:13px}
+.legend b{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:14px}
+.badge{display:none;width:26px;height:26px;border-radius:50%;color:#fff;font-weight:700;font-size:13px;place-items:center;border:2px solid var(--surface);flex:none}
+body.show .badge{display:inline-grid}
+.b1{background:var(--p1)}.b2{background:var(--p2)}.b3{background:var(--p3)}
+body.show .hl1,body.show .hl2,body.show .hl3{outline:2px dashed;outline-offset:4px;border-radius:10px}
+body.show .hl1{outline-color:var(--p1)}body.show .hl2{outline-color:var(--p2)}body.show .hl3{outline-color:var(--p3)}
+/* Ficha */
+.product{display:grid;grid-template-columns:minmax(0,520px) minmax(0,1fr) 360px;gap:32px;padding:12px 0 32px;align-items:start}
+.gal .main{background:var(--soft);border-radius:8px;aspect-ratio:13/12;display:grid;place-items:center;overflow:hidden}
+.gal svg{width:70%;height:auto;max-width:100%}
+.thumbs{display:flex;gap:12px;margin-top:12px}
+.thumbs button{width:80px;height:80px;border-radius:6px;background:var(--soft);border:1px solid var(--line);display:grid;place-items:center;padding:6px}
+.thumbs button[aria-pressed="true"]{border:2px solid var(--ink)}
+.thumbs svg{width:100%}
+h1{font-size:24px;line-height:1.3;font-weight:600;margin:0 0 8px}
+.rate{color:var(--link);margin:0 0 10px}.rate .st{color:#f59e0b;letter-spacing:1px}
+.price{font-size:32px;font-weight:600;margin:12px 0 4px;font-variant-numeric:tabular-nums}
+.info h2{font-size:16px;margin:18px 0 6px}
+.info ul{margin:0;padding-left:20px;display:grid;gap:4px}
+hr{border:0;border-top:1px solid var(--line);margin:12px 0}
+/* Caja de compra */
+.buy{border:1px solid var(--line);border-radius:8px;padding:20px;display:grid;gap:14px;background:var(--surface);position:sticky;top:12px}
+.buy .p{font-size:28px;font-weight:600;font-variant-numeric:tabular-nums}
+.ok{color:var(--ok);font-weight:600;font-size:16px}
+.lbl{font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:8px;cursor:pointer}
+.opt:has(input:checked){border:2px solid var(--ink);padding:9px 11px;background:var(--soft)}
+.opt:has(input:focus-visible){outline:2px solid var(--focus);outline-offset:2px}
+.opt input{margin-top:3px;accent-color:var(--ink)}
+.opt b{display:block;font-size:14px}.opt span{font-size:13px}.opt small{display:block;color:var(--muted);font-size:12px;line-height:1.35;margin-top:2px}
+.prime{border:1px solid var(--p2);border-radius:8px;padding:12px;font-size:13px;display:grid;gap:8px;background:var(--soft)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--ok)}
+.qty{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.step{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--soft)}
+.step button{width:34px;height:34px;border:0;background:none;font-size:18px}
+.step button:disabled{color:var(--muted);cursor:default}
+.step output{min-width:40px;display:grid;place-items:center;font-weight:600;background:var(--surface);border-inline:1px solid var(--line)}
+.sub-total{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.btn{width:100%;border-radius:22px;padding:13px 16px;font-weight:600;border:1px solid transparent;font-size:15px}
+.btn.primary{background:var(--cta);color:var(--cta-ink)}.btn.primary:hover{filter:brightness(.96)}
+.btn.second{background:var(--surface);border-color:var(--muted);color:var(--ink);padding:11px 16px;font-size:14px;font-weight:500}
+.btn.second:hover{background:var(--soft)}
+.btn.sm{width:auto;font-size:13px;padding:8px 16px}
+.seller{background:var(--seller-bg);border:1px solid var(--seller-line);border-radius:8px;padding:12px;display:grid;gap:10px}
+.seller .lbl{color:var(--ok)}
+.seller dl{margin:0;display:grid;gap:8px}
+.seller dt{font-size:12px;color:var(--muted)}.seller dd{margin:0;font-size:14px;font-weight:600}
+.acc{border:1px solid var(--line);border-radius:8px}
+.acc>button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;background:none;border:0;padding:10px 12px;text-align:left}
+.acc>button b{color:var(--link);display:block}.acc>button small{color:var(--muted);font-size:12px;display:block;line-height:1.35}
+.acc .caret{transition:transform .15s;color:var(--muted)}
+.acc[data-open="true"] .caret{transform:rotate(90deg)}
+.acc .body{padding:0 12px 12px;display:grid;gap:12px;border-top:1px solid var(--line);padding-top:12px}
+.acc .body[hidden]{display:none}
+.mini{font-size:13px;display:grid;gap:4px}
+.mini .who{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;font-size:14px}
+.mini .who span{color:var(--muted);font-size:12px}.mini .who b{font-weight:600}
+.fine{font-size:11px;color:var(--muted)}
+/* Detalle */
+.detail{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:24px 0 40px;border-top:1px solid var(--line)}
+.card{border:1px solid var(--line);border-radius:8px;padding:20px;display:grid;gap:8px;align-content:start;background:var(--surface)}
+.card h3{margin:0;font-size:18px}
+.big{font-size:28px;font-weight:700}
+.bars{display:grid;gap:6px}.bar{display:grid;grid-template-columns:48px 1fr 40px;gap:8px;align-items:center;font-size:13px}
+.bar i{display:block;height:10px;border-radius:4px;background:var(--soft);border:1px solid var(--line);overflow:hidden;position:relative}
+.bar i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:#f59e0b}
+.qa input{border:1px solid var(--line);border-radius:6px;padding:10px 12px;font:inherit;background:var(--soft);color:var(--ink);width:100%}
+.qa ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:10px}
+.qa li b{display:block}.qa li span{color:var(--muted);font-size:13px}
+footer{background:var(--nav2);color:#fff;padding-block:28px}
+footer .wrap{display:grid;gap:6px}
+footer small{color:var(--nav-muted)}
+/* Superposiciones */
+.overlay{position:fixed;inset:0;background:var(--overlay);z-index:50;display:flex;justify-content:center;align-items:center;padding:16px}
+.overlay[hidden]{display:none}
+.modal{background:var(--surface);color:var(--ink);border-radius:12px;max-width:520px;width:100%;max-height:calc(100vh - 32px);overflow:auto;padding:24px;display:grid;gap:14px;border:1px solid var(--line)}
+.modal h2{margin:0;font-size:20px}
+.modal ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.modal .acts{display:flex;gap:10px;flex-wrap:wrap}
+.modal .acts .btn{flex:1 1 180px}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--surface);color:var(--ink);z-index:60;padding:20px;padding-top:max(20px,env(safe-area-inset-top,0px));padding-bottom:max(20px,env(safe-area-inset-bottom,0px));padding-right:max(20px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px;border-left:1px solid var(--line);box-shadow:-8px 0 24px rgba(0,0,0,.25)}
+.drawer[hidden]{display:none}
+.drawer header{display:flex;justify-content:space-between;align-items:center}
+.drawer h2{margin:0;font-size:20px}
+.xbtn{background:none;border:0;font-size:22px;line-height:1;width:36px;height:36px;border-radius:6px}
+.xbtn:hover{background:var(--soft)}
+.lines{flex:1;overflow:auto;display:grid;gap:14px;align-content:start}
+.line{display:grid;grid-template-columns:64px 1fr;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.line .ph{background:var(--soft);border-radius:6px;display:grid;place-items:center;padding:6px}
+.line b{display:block}.line small{color:var(--muted);display:block}
+.line .row{display:flex;gap:12px;align-items:center;margin-top:6px;flex-wrap:wrap}
+.tot{display:grid;gap:4px;font-variant-numeric:tabular-nums}
+.tot div{display:flex;justify-content:space-between}.tot .g{font-size:18px;font-weight:700}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(20px,env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:8px;z-index:80;max-width:calc(100% - 32px);font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.toast[hidden]{display:none}
+.steps{display:flex;gap:8px;font-size:12px;color:var(--muted);font-weight:600}.steps .on{color:var(--ink)}
+.empty{color:var(--muted);padding:24px 0;text-align:center}
+@media (max-width:1100px){.product{grid-template-columns:minmax(0,1fr) 360px}.gal{grid-column:1 / -1}.gal .main{aspect-ratio:16/9}}
+@media (max-width:820px){.product{grid-template-columns:minmax(0,1fr)}.buy{position:static}.detail{grid-template-columns:minmax(0,1fr)}.legend{grid-template-columns:minmax(0,1fr)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+</head>
+<body>
+<header class="top bleed"><div class="wrap">
+  <span class="brand">amazon.com.mx</span>
+  <div class="loc">Enviar a<b>Puebla City 72580</b></div>
+  <form class="search" id="searchForm" role="search"><input id="q" type="search" placeholder="Buscar en Amazon México" aria-label="Buscar en Amazon México"><button type="submit">Buscar</button></form>
+  <div class="hbtn" id="accWrap"><button class="hbtn" id="accBtn" aria-haspopup="true" aria-expanded="false"><small>Hola, identifícate</small><b>Cuenta y listas ▾</b></button>
+    <div class="menu" id="accMenu" hidden>
+      <button id="mPrime" disabled>Administrar Prime <small id="mPrimeS">(no activo)</small></button>
+      <button id="mTheme">Cambiar tema claro / oscuro</button>
+    </div></div>
+  <button class="hbtn cartbtn" id="cartBtn" aria-label="Abrir carrito"><span>Carrito</span><span class="n" id="cartN">0</span></button>
+</div></header>
+<nav class="sub bleed" aria-label="Categorías"><div class="wrap">
+  <button class="stub">Todo</button><button class="stub">Ofertas del día</button><button class="stub">Electrónicos</button><button class="stub">Hogar y cocina</button><button class="stub">Moda</button><button class="stub">Prime</button><button class="stub">Servicio al cliente</button>
+</div></nav>
+<section class="mejoras bleed" aria-label="Mejoras propuestas"><div class="wrap">
+  <label class="sw"><input type="checkbox" id="tg"><span class="track"></span>Mostrar mejoras propuestas</label>
+  <span class="note">Prototipo funcional de la propuesta de usabilidad. Ningún cobro ni suscripción es real.</span>
+  <div class="legend" style="grid-column:1/-1;width:100%">
+    <div><b><span class="badge b1" style="display:inline-grid">1</span>P1 · Menos sobrecarga</b>Un botón primario dominante, una sola fecha por defecto, cantidad compacta y ofertas secundarias colapsadas.</div>
+    <div><b><span class="badge b2" style="display:inline-grid">2</span>P2 · Prime sin patrones oscuros</b>Estándar y Prime con igual peso, sin preselección, costo y renovación visibles, cancelación en dos pasos.</div>
+    <div><b><span class="badge b3" style="display:inline-grid">3</span>P3 · Quién vende y quién envía</b>Bloque propio a 14 px en negrita con calificación, devoluciones y garantía.</div>
+  </div>
+</div></section>
+
+<main class="wrap">
+<p class="crumbs">Electrónicos › Audio › Audífonos › Sony WH-CH520</p>
+<div class="product">
+  <section class="gal" aria-label="Galería">
+    <div class="main" id="mainImg"></div>
+    <div class="thumbs" id="thumbs"></div>
+  </section>
+  <section class="info">
+    <h1>Sony Audífonos inalámbricos on-Ear WH-CH520, hasta 50 horas de batería, Negro (Versión Nacional)</h1>
+    <p class="rate"><span class="st">★★★★★</span> 4.8 · <a href="#resenas">10,555 calificaciones</a></p>
+    <hr>
+    <div class="price" id="infoPrice">$622.97</div>
+    <h2>Lo que debes saber</h2>
+    <ul><li>Hasta 50 horas de duración de batería</li><li>Audífonos on-Ear con conexión inalámbrica</li><li>Color: Negro</li><li>Versión nacional</li></ul>
+  </section>
+
+  <aside class="buy hl1" aria-label="Caja de compra">
+    <div><div class="p" id="buyPrice">$622.97</div><div class="ok">Disponible</div></div>
+
+    <div class="opts hl2" role="radiogroup" aria-labelledby="shipLbl">
+      <div class="lbl" id="shipLbl"><span class="badge b2">2</span>Elige tu envío</div>
+      <label class="opt"><input type="radio" name="ship" value="std" checked><div><b>Envío estándar · GRATIS</b><span>Llega el miércoles, 25 de noviembre</span></div></label>
+      <label class="opt"><input type="radio" name="ship" value="prime"><div><b>Envío Prime · GRATIS</b><span>Llega mañana, 24 de noviembre</span><small>Requiere Prime. Prueba gratuita; después, cargo recurrente con el costo visible antes de aceptar. Cancela en 2 pasos.</small></div></label>
+      <div class="prime" id="primePanel" hidden>
+        <div id="primeOff"><b>Prime no está activo en tu cuenta.</b><p style="margin:6px 0 10px">Revisa las condiciones antes de decidir. No se activa nada hasta que lo confirmes.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary sm" id="primeLearn">Ver condiciones de Prime</button><button class="btn second sm" id="primeBack">Quedarme con envío estándar</button></div></div>
+        <div id="primeOn" hidden><span class="chip">✓ Prime activo</span> <button class="link" id="primeCancelLink">Cancelar Prime en 2 pasos</button></div>
+      </div>
+    </div>
+
+    <div class="qty" id="qtyRow"><span>Cantidad:</span>
+      <div class="step"><button id="qMinus" aria-label="Disminuir cantidad">−</button><output id="qOut" aria-live="polite">1</output><button id="qPlus" aria-label="Aumentar cantidad">+</button></div>
+      <span class="sub-total" id="subTotal"></span></div>
+
+    <div class="hl1" style="display:grid;gap:10px"><span class="badge b1" style="display:none">1</span>
+      <button class="btn primary" id="addBtn">Agregar al carrito</button>
+      <button class="btn second" id="buyNow">Comprar ahora</button></div>
+
+    <div class="seller hl3" id="sellerBox">
+      <div class="lbl"><span class="badge b3">3</span>Quién vende y quién envía</div>
+      <dl>
+        <div><dt>Vendido por</dt><dd>Amazon México</dd></div>
+        <div><dt>Enviado por</dt><dd>Amazon México</dd></div>
+        <div><dt>Calificación del vendedor</dt><dd>★ 4.7 · 96 % de opiniones positivas*</dd></div>
+        <div><dt>Devoluciones</dt><dd>Hasta el 31 de enero de 2027</dd></div>
+        <div><dt>Garantía</dt><dd>12 meses del fabricante*</dd></div>
+      </dl>
+      <button class="link" id="policyBtn" style="text-align:left;font-size:13px">Ver política completa de devoluciones y garantía</button>
+    </div>
+
+    <div class="acc" id="acc" data-open="false">
+      <button id="accToggle" aria-expanded="false"><span><b>Protección, usados y otras ofertas</b><small>Plan de protección · Usado desde $591.82 · Otros vendedores (8)</small></span><span class="caret">▸</span></button>
+      <div class="body" id="accBody" hidden>
+        <div class="opts" role="radiogroup" aria-label="Plan de protección">
+          <div class="lbl">Plan de protección (opcional)</div>
+          <label class="opt"><input type="radio" name="plan" value="0" checked><div><b>Sin plan de protección</b></div></label>
+          <label class="opt"><input type="radio" name="plan" value="2"><div><b>2 años · $105.91</b><small>Assurant · daños accidentales</small></div></label>
+          <label class="opt"><input type="radio" name="plan" value="3"><div><b>3 años · $135.80</b><small>Assurant · daños accidentales</small></div></label>
+          <label class="opt"><input type="radio" name="plan" value="4"><div><b>4 años · $163.71</b><small>Assurant · daños accidentales</small></div></label>
+        </div>
+        <div class="mini"><div class="lbl">Usado: Como nuevo</div><b style="font-size:16px">$591.82</b>
+          <div class="who"><span>Enviado por</span><b>Amazon</b><span>Vendido por</span><b>Amazon Remates de Almacén</b></div>
+          <button class="link stub" style="text-align:left">Ver oferta usada</button></div>
+        <div class="mini"><div class="lbl">Otros vendedores (8)</div><span>Nuevo y usado desde $579.36 · Entrega GRATIS</span><button class="link stub" style="text-align:left">Ver las 8 ofertas</button></div>
+      </div>
+    </div>
+    <p class="fine">* Datos ilustrativos de la propuesta; precio, fechas, devolución y ofertas se tomaron de la ficha observada el 23-nov-2026.</p>
+  </aside>
+</div>
+
+<section class="detail" id="resenas">
+  <div class="card"><h3>Reseñas de clientes</h3><div class="big">4.8 de 5</div><span style="color:var(--muted)">10,555 calificaciones</span>
+    <div class="bars" aria-label="Distribución ilustrativa"><div class="bar"><span>5 ★</span><i style="--w:88%"></i><span>88 %</span></div><div class="bar"><span>4 ★</span><i style="--w:8%"></i><span>8 %</span></div><div class="bar"><span>3 ★</span><i style="--w:2%"></i><span>2 %</span></div><div class="bar"><span>2 ★</span><i style="--w:1%"></i><span>1 %</span></div><div class="bar"><span>1 ★</span><i style="--w:1%"></i><span>1 %</span></div></div>
+    <span class="fine">Distribución ilustrativa.</span><button class="link stub" style="text-align:left">Ver todas las reseñas</button></div>
+  <div class="card qa"><h3>Preguntas y respuestas de clientes</h3>
+    <input id="qaIn" type="search" placeholder="Busca una respuesta o pregunta algo sobre este producto" aria-label="Buscar en preguntas">
+    <ul id="qaList"></ul><span class="fine">Preguntas de ejemplo para el prototipo.</span></div>
+</section>
+</main>
+
+<footer class="bleed"><div class="wrap"><span>Prototipo de propuesta de rediseño: proyecto académico de usabilidad. No es el sitio oficial de Amazon México.</span><small>Ingeniería de Usabilidad · Grupo 7C</small></div></footer>
+
+<!-- Carrito -->
+<aside class="drawer" id="cart" hidden aria-label="Carrito">
+  <header><h2>Tu carrito</h2><button class="xbtn" data-close="cart" aria-label="Cerrar carrito">×</button></header>
+  <div class="lines" id="lines"></div>
+  <div class="tot" id="tot"></div>
+  <button class="btn primary" id="toCheckout">Proceder al pago (simulado)</button>
+</aside>
+<!-- Condiciones de Prime -->
+<div class="overlay" id="ovPrime" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="tPrime">
+  <h2 id="tPrime">Antes de activar Prime</h2>
+  <ul><li><b>Prueba gratuita</b>: sin cargo durante el periodo de prueba.</li><li><b>Después</b>: se cobra la tarifa vigente de Prime, que verás aquí antes de confirmar.</li><li><b>Renovación automática</b> hasta que canceles.</li><li><b>Cancelar</b> toma 2 pasos desde «Cuenta y listas».</li></ul>
+  <div class="acts"><button class="btn primary" id="primeYes">Activar prueba gratuita</button><button class="btn second" data-close="ovPrime">No, gracias</button></div>
+  <p class="fine">Simulación: no se activa ninguna suscripción real.</p>
+</div></div>
+<!-- Cancelar Prime -->
+<div class="overlay" id="ovCancel" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="tCancel">
+  <div class="steps"><span id="s1" class="on">Paso 1 de 2</span><span id="s2">Paso 2 de 2</span></div>
+  <h2 id="tCancel"></h2><p id="cancelTxt" style="margin:0"></p>
+  <div class="acts" id="cancelActs"></div>
+</div></div>
+<!-- Política -->
+<div class="overlay" id="ovPolicy" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="tPol">
+  <h2 id="tPol">Devoluciones y garantía</h2>
+  <ul><li><b>Devoluciones</b>: puedes devolver el producto hasta el 31 de enero de 2027.</li><li><b>Vendido y enviado por</b>: Amazon México.</li><li><b>Garantía</b>: 12 meses del fabricante*.</li></ul>
+  <p class="fine">* Dato ilustrativo de la propuesta.</p>
+  <div class="acts"><button class="btn second" data-close="ovPolicy">Cerrar</button></div>
+</div></div>
+<!-- Pago -->
+<div class="overlay" id="ovPay" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="tPay">
+  <h2 id="tPay">Resumen del pedido</h2>
+  <div id="payBody" class="tot"></div>
+  <p class="fine" id="payNote">Prototipo: no se realiza ningún cobro y no se piden datos de pago.</p>
+  <div class="acts"><button class="btn primary" id="payOk">Confirmar pedido (simulado)</button><button class="btn second" data-close="ovPay">Volver</button></div>
+</div></div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const money=n=>n.toLocaleString('es-MX',{style:'currency',currency:'MXN'});
+const PRICE=622.97, MAXQ=30;
+const PLAN={0:{n:'Sin plan de protección',p:0},2:{n:'Protección 2 años',p:105.91},3:{n:'Protección 3 años',p:135.80},4:{n:'Protección 4 años',p:163.71}};
+const SHIP={std:'miércoles, 25 de noviembre',prime:'mañana, 24 de noviembre'};
+const S={qty:1,ship:'std',prime:false,plan:0,cart:[]};
+const headphones=(c,r=0)=>`<svg viewBox="0 0 200 180" aria-hidden="true" style="transform:rotate(${r}deg)"><path d="M32 110V92a68 68 0 0 1 136 0v18" fill="none" stroke="${c}" stroke-width="10" stroke-linecap="round"/><rect x="18" y="104" width="38" height="58" rx="16" fill="${c}"/><rect x="144" y="104" width="38" height="58" rx="16" fill="${c}"/><rect x="26" y="116" width="22" height="34" rx="10" fill="#fff" opacity=".12"/><rect x="152" y="116" width="22" height="34" rx="10" fill="#fff" opacity=".12"/></svg>`;
+let toastT;const toast=m=>{const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)};
+const open=id=>{const e=$('#'+id);e.hidden=false;const b=e.querySelector('button:not([disabled])');if(b)b.focus()};
+const close=id=>{$('#'+id).hidden=true};
+/* Galería */
+const views=[['#1f2937',0],['#111827',-8],['#374151',8],['#0b1220',0]];
+let gi=0;
+function drawGal(){$('#mainImg').innerHTML=headphones(views[gi][0],views[gi][1]);$('#thumbs').innerHTML=views.map((v,i)=>`<button aria-label="Vista ${i+1}" aria-pressed="${i===gi}" data-i="${i}">${headphones(v[0],v[1])}</button>`).join('')}
+$('#thumbs').addEventListener('click',e=>{const b=e.target.closest('button');if(b){gi=+b.dataset.i;drawGal()}});
+/* Caja de compra */
+const unit=()=>PRICE+PLAN[S.plan].p;
+function renderBuy(){
+  $('#qOut').textContent=S.qty;$('#qMinus').disabled=S.qty<=1;$('#qPlus').disabled=S.qty>=MAXQ;
+  $('#subTotal').textContent='Subtotal: '+money(unit()*S.qty)+(S.plan?' (con protección)':'');
+  const pp=$('#primePanel');pp.hidden=!(S.ship==='prime');
+  $('#primeOff').hidden=S.prime;$('#primeOn').hidden=!S.prime;
+  $('#mPrime').disabled=!S.prime;$('#mPrimeS').textContent=S.prime?'(activo)':'(no activo)';
+}
+$('#qMinus').onclick=()=>{S.qty=Math.max(1,S.qty-1);renderBuy()};
+$('#qPlus').onclick=()=>{S.qty=Math.min(MAXQ,S.qty+1);renderBuy()};
+$$('input[name=ship]').forEach(r=>r.onchange=()=>{S.ship=r.value;renderBuy()});
+$$('input[name=plan]').forEach(r=>r.onchange=()=>{S.plan=+r.value;renderBuy()});
+$('#primeBack').onclick=()=>{document.querySelector('input[name=ship][value=std]').checked=true;S.ship='std';renderBuy()};
+$('#primeLearn').onclick=()=>open('ovPrime');
+$('#primeYes').onclick=()=>{S.prime=true;close('ovPrime');renderBuy();toast('Prime activado (simulado). Puedes cancelarlo en 2 pasos.')};
+$('#acc').querySelector('#accToggle').onclick=()=>{const a=$('#acc'),o=a.dataset.open!=='true';a.dataset.open=o;$('#accBody').hidden=!o;$('#accToggle').setAttribute('aria-expanded',o)};
+$('#policyBtn').onclick=()=>open('ovPolicy');
+/* Carrito */
+function addToCart(){
+  if(S.ship==='prime'&&!S.prime){toast('Para usar envío Prime, revisa y activa Prime, o elige envío estándar.');$('#primePanel').scrollIntoView({block:'center',behavior:'smooth'});return false}
+  const l=S.cart.find(x=>x.plan===S.plan&&x.ship===S.ship);
+  if(l)l.qty=Math.min(MAXQ,l.qty+S.qty);else S.cart.push({plan:S.plan,ship:S.ship,qty:S.qty});
+  renderCart();return true;
+}
+const sub=()=>S.cart.reduce((a,l)=>a+(PRICE+PLAN[l.plan].p)*l.qty,0);
+const count=()=>S.cart.reduce((a,l)=>a+l.qty,0);
+function totals(){const s=sub();return `<div><span>Subtotal (${count()} ${count()===1?'artículo':'artículos'})</span><span>${money(s)}</span></div><div><span>Envío</span><span>GRATIS</span></div><div class="g"><span>Total con impuestos</span><span>${money(s)}</span></div>`}
+function renderCart(){
+  $('#cartN').textContent=count();
+  const L=$('#lines');
+  L.innerHTML=S.cart.length?S.cart.map((l,i)=>`<div class="line"><div class="ph">${headphones('#1f2937')}</div><div><b>Sony WH-CH520, Negro</b><small>${PLAN[l.plan].n} · ${l.ship==='prime'?'Envío Prime · llega '+SHIP.prime:'Envío estándar · llega '+SHIP.std}</small><b>${money((PRICE+PLAN[l.plan].p)*l.qty)}</b><div class="row"><div class="step"><button data-a="m" data-i="${i}" aria-label="Disminuir">−</button><output>${l.qty}</output><button data-a="p" data-i="${i}" aria-label="Aumentar">+</button></div><button class="link" data-a="x" data-i="${i}">Eliminar</button></div></div></div>`).join(''):'<p class="empty">Tu carrito está vacío.</p>';
+  $('#tot').innerHTML=S.cart.length?totals():'';$('#toCheckout').disabled=!S.cart.length;
+}
+$('#lines').addEventListener('click',e=>{const b=e.target.closest('button[data-a]');if(!b)return;const i=+b.dataset.i,l=S.cart[i];
+  if(b.dataset.a==='m'){l.qty--;if(l.qty<1)S.cart.splice(i,1)}else if(b.dataset.a==='p'){l.qty=Math.min(MAXQ,l.qty+1)}else{S.cart.splice(i,1)}renderCart()});
+$('#addBtn').onclick=()=>{if(addToCart()){open('cart');}};
+$('#cartBtn').onclick=()=>{open('cart')};
+$('#toCheckout').onclick=()=>{$('#payBody').innerHTML=totals()+'<div style="display:block;margin-top:8px"><span style="color:var(--muted)">Método de pago: se elige en el siguiente paso (simulado).</span></div>';$('#payOk').hidden=false;$('#payNote').textContent='Prototipo: no se realiza ningún cobro y no se piden datos de pago.';close('cart');open('ovPay')};
+$('#buyNow').onclick=()=>{
+  if(S.ship==='prime'&&!S.prime){toast('Para usar envío Prime, revisa y activa Prime, o elige envío estándar.');return}
+  const u=unit()*S.qty;
+  $('#payBody').innerHTML=`<div><span>Sony WH-CH520 × ${S.qty}${S.plan?' + '+PLAN[S.plan].n:''}</span><span>${money(u)}</span></div><div><span>Envío (${S.ship==='prime'?'Prime':'estándar'}) · llega ${SHIP[S.ship]}</span><span>GRATIS</span></div><div class="g"><span>Total con impuestos</span><span>${money(u)}</span></div>`;
+  $('#payOk').hidden=false;$('#payNote').textContent='Prototipo: no se realiza ningún cobro y no se piden datos de pago.';open('ovPay')};
+$('#payOk').onclick=()=>{$('#payBody').innerHTML='<div class="g"><span>Pedido simulado registrado</span></div>';$('#payNote').textContent='No se realizó ningún cargo.';$('#payOk').hidden=true;S.cart=[];renderCart()};
+/* Cancelar Prime */
+function cancelStep(n){
+  $('#s1').className=n===1?'on':'';$('#s2').className=n===2?'on':'';
+  const t=$('#tCancel'),x=$('#cancelTxt'),a=$('#cancelActs');
+  if(n===1){t.textContent='Tu suscripción a Prime';x.textContent='Prueba gratuita activa. Si cancelas, pierdes el envío Prime en tus próximos pedidos.';a.innerHTML='<button class="btn second" id="cKeep">Conservar Prime</button><button class="btn second" id="cNext">Continuar con la cancelación</button>'}
+  else if(n===2){t.textContent='Confirma la cancelación';x.textContent='Se cancelará tu suscripción y no habrá cargos posteriores. Puedes volver a activar Prime cuando quieras.';a.innerHTML='<button class="btn second" id="cKeep">Conservar Prime</button><button class="btn primary" id="cDo">Sí, cancelar Prime</button>'}
+  else{t.textContent='Prime cancelado';x.textContent='Tu suscripción terminó (simulado). No se hará ningún cargo.';a.innerHTML='<button class="btn second" data-close="ovCancel">Cerrar</button>'}
+  const k=$('#cKeep');if(k)k.onclick=()=>close('ovCancel');const nx=$('#cNext');if(nx)nx.onclick=()=>cancelStep(2);const d=$('#cDo');if(d)d.onclick=()=>{S.prime=false;if(S.ship==='prime'){document.querySelector('input[name=ship][value=std]').checked=true;S.ship='std'}renderBuy();cancelStep(3)};
+}
+const startCancel=()=>{cancelStep(1);open('ovCancel')};
+$('#primeCancelLink').onclick=startCancel;
+$('#mPrime').onclick=()=>{$('#accMenu').hidden=true;startCancel()};
+/* Cuenta, tema, buscador, mejoras, Q&A */
+$('#accBtn').onclick=e=>{e.stopPropagation();const m=$('#accMenu');m.hidden=!m.hidden;$('#accBtn').setAttribute('aria-expanded',!m.hidden)};
+document.addEventListener('click',e=>{if(!e.target.closest('#accWrap'))$('#accMenu').hidden=true});
+$('#mTheme').onclick=()=>{const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark';$('#accMenu').hidden=true};
+$('#searchForm').onsubmit=e=>{e.preventDefault();toast('La búsqueda no forma parte del prototipo.')};
+$$('.stub').forEach(b=>b.addEventListener('click',()=>toast('Esta sección no forma parte del prototipo.')));
+$('#tg').onchange=e=>document.body.classList.toggle('show',e.target.checked);
+const QA=[['¿Se puede usar mientras se carga?','Sí, según la ficha del fabricante. Ejemplo para el prototipo.'],['¿Incluye cable de carga?','Incluye cable USB-C. Ejemplo para el prototipo.'],['¿Se conecta a dos dispositivos?','Ejemplo para el prototipo: consulta la descripción del fabricante.']];
+function drawQA(){const f=$('#qaIn').value.toLowerCase();const r=QA.filter(x=>(x[0]+x[1]).toLowerCase().includes(f));$('#qaList').innerHTML=r.length?r.map(x=>`<li><b>${x[0]}</b><span>${x[1]}</span></li>`).join(''):'<li><span>Sin resultados. Puedes enviar tu pregunta (simulado).</span></li>'}
+$('#qaIn').oninput=drawQA;
+/* Cierres */
+document.addEventListener('click',e=>{const c=e.target.closest('[data-close]');if(c)close(c.dataset.close);if(e.target.classList.contains('overlay'))e.target.hidden=true});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$$('.overlay,.drawer').forEach(x=>x.hidden=true);$('#accMenu').hidden=true}});
+drawGal();renderBuy();renderCart();drawQA();
+</script>
+</body>
+</html>
