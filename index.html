@@ -77,6 +77,17 @@ body.show .key{display:flex}
 [data-imp]{position:relative}
 .ibadge{display:none;position:absolute;top:-12px;left:-12px;z-index:5;min-width:26px;height:26px;border-radius:13px;color:#fff;font-weight:700;font-size:12px;border:2px solid var(--surface);padding:0 6px;line-height:1;align-items:center;justify-content:center}
 body.show .ibadge{display:inline-flex}
+.iinfo{display:none;position:absolute;top:-12px;left:20px;z-index:5;width:26px;height:26px;border-radius:50%;color:#fff;font:italic 700 15px/1 Georgia,serif;border:2px solid var(--surface);padding:0;align-items:center;justify-content:center;cursor:help}
+body.show .iinfo{display:inline-flex}
+.iinfo[data-o="doc"]{background:var(--o1)}.iinfo[data-o="der"]{background:var(--o2)}.iinfo[data-o="adi"]{background:var(--o3)}
+.tip{position:fixed;z-index:1000;max-width:360px;background:var(--ink);color:var(--bg);border-radius:10px;padding:12px 14px;box-shadow:0 8px 24px rgba(0,0,0,.35);font-size:13px;line-height:1.45;pointer-events:none}
+.tip[hidden]{display:none}
+.tip .th{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px}
+.tip .tn{flex:none;min-width:24px;height:24px;border-radius:12px;color:#fff;font-weight:700;font-size:12px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px}
+.tip .tn.doc{background:var(--o1)}.tip .tn.der{background:var(--o2)}.tip .tn.adi{background:var(--o3)}
+.tip b{display:block}.tip .tl{font-weight:700;margin-top:6px;opacity:.85;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.tip .tf{margin-top:8px;opacity:.7;font-size:11px}
+
 body.show [data-imp]{outline:2px dashed var(--o1);outline-offset:4px;border-radius:8px}
 body.show [data-imp][data-o="der"]{outline-color:var(--o2)}body.show [data-imp][data-o="adi"]{outline-color:var(--o3)}
 .ibadge[data-o="doc"]{background:var(--o1)}.ibadge[data-o="der"]{background:var(--o2)}.ibadge[data-o="adi"]{background:var(--o3)}
@@ -114,14 +125,14 @@ select,input[type=text],input[type=search]{font:inherit;color:var(--ink);backgro
 .opt input{margin-top:3px;accent-color:var(--ink)}
 .opt b{display:block;font-size:14px}.opt span{font-size:13px}.opt small{display:block;color:var(--muted);font-size:12px;line-height:1.35;margin-top:2px}
 .pimg{background:var(--soft);border-radius:8px;display:grid;place-items:center;overflow:hidden}
-.pimg svg{width:70%;max-width:100%;height:auto}
+.pimg{background:#fff}.pimg{position:relative}.pimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;padding:6%;box-sizing:border-box}.hero .r img{width:auto;max-width:100%;max-height:260px;height:auto;padding:0}
 .stars{color:#b45309;letter-spacing:1px}
 .price{font-variant-numeric:tabular-nums;font-weight:600}
 /* Inicio */
 .hero{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;padding:24px 0}
 .hero .l{display:grid;gap:12px;align-content:center}
 .hero p{margin:0;color:var(--muted);font-size:15px;max-width:60ch}
-.hero .r{display:grid;place-items:center;background:var(--soft);border-radius:12px;padding:24px}
+.hero .r{display:grid;place-items:center;background:#fff;border-radius:12px;padding:24px}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin:8px 0 24px}
 .cat{border:1px solid var(--line);border-radius:8px;padding:16px;display:grid;gap:8px;background:var(--surface);text-align:left;font-weight:600}
@@ -266,7 +277,7 @@ footer .wrap{display:grid;gap:6px}footer small{color:var(--nav-muted)}
   <label class="sw"><input type="checkbox" id="tg"><span class="track"></span>Mostrar mejoras propuestas</label>
   <button class="link" data-act="go" data-arg="mejoras">Ver catálogo de mejoras</button>
   <span class="note">Prototipo funcional. Ningún cobro, pedido ni suscripción es real.</span>
-  <div class="key" style="width:100%"><span><i class="dot d-doc"></i>Propuesta de los documentos</span><span><i class="dot d-der"></i>Derivada de los documentos</span><span><i class="dot d-adi"></i>Adicional del análisis</span><span>Toca un número para ver el detalle.</span></div>
+  <div class="key" style="width:100%"><span><i class="dot d-doc"></i>Propuesta de los documentos</span><span><i class="dot d-der"></i>Derivada de los documentos</span><span><i class="dot d-adi"></i>Adicional del análisis</span><span>Pasa el mouse sobre un número o sobre «i» para ver qué se mejoró y qué heurística aplica; haz clic para el detalle completo.</span></div>
 </div></section>
 <main class="wrap" id="app" tabindex="-1"></main>
 <footer class="bleed"><div class="wrap"><span>Prototipo de propuesta de rediseño: proyecto académico de usabilidad. No es el sitio oficial de Amazon México.</span><small>Ingeniería de Usabilidad · Grupo 7C · Los datos reales provienen de la ficha Sony WH-CH520 observada el 23-nov-2026; el resto es ilustrativo.</small></div></footer>
@@ -330,7 +341,7 @@ const IMPS=[
 const imp=n=>IMPS.find(i=>i.n===n);
 
 /* ---------- Utilidades ---------- */
-const headphones=(c)=>`<svg viewBox="0 0 200 180" aria-hidden="true"><path d="M32 110V92a68 68 0 0 1 136 0v18" fill="none" stroke="${c}" stroke-width="10" stroke-linecap="round"/><rect x="18" y="104" width="38" height="58" rx="16" fill="${c}"/><rect x="144" y="104" width="38" height="58" rx="16" fill="${c}"/></svg>`;
+const headphones=(c)=>`<img src="img/audifonos.png" width="893" height="1000" alt="Audífonos inalámbricos over-ear, color negro" loading="lazy" decoding="async">`;
 const stars=r=>'★'.repeat(Math.round(r))+'☆'.repeat(5-Math.round(r));
 let toastT;
 function toast(m,label,fn){const t=$('#toast');t.innerHTML=`<span>${esc(m)}</span>${label?`<button id="tAct">${esc(label)}</button>`:''}`;t.hidden=false;if(label)$('#tAct').onclick=()=>{fn();t.hidden=true};clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,label?7000:3500)}
@@ -361,7 +372,7 @@ function render(keepScroll){
  if(f){const e=$(`[data-k="${f}"]`);if(e)e.focus()}
 }
 function refreshHdr(){$('#cartN').textContent=count();$('#mPrime').disabled=!S.prime;$('#mPrimeS').textContent=S.prime?'(activo)':'(no activo)'}
-function decorate(){$$('[data-imp]',$('#app')).forEach(e=>{if(e.querySelector(':scope>.ibadge'))return;const n=+e.dataset.imp,i=imp(n);const b=document.createElement('button');b.className='ibadge';b.dataset.act='imp';b.dataset.arg=n;b.dataset.o=i.o;b.textContent=n;b.setAttribute('aria-label','Mejora '+n+': '+i.t);e.prepend(b)});$$('[data-imp]').forEach(e=>{e.dataset.o=e.dataset.o||imp(+e.dataset.imp).o})}
+function decorate(){$$('[data-imp]',$('#app')).forEach(e=>{if(e.querySelector(':scope>.ibadge'))return;const n=+e.dataset.imp,i=imp(n);const b=document.createElement('button');b.className='ibadge';b.dataset.act='imp';b.dataset.arg=n;b.dataset.o=i.o;b.textContent=n;b.setAttribute('aria-label','Mejora '+n+': '+i.t);const k=document.createElement('button');k.className='iinfo';k.dataset.act='imp';k.dataset.arg=n;k.dataset.o=i.o;k.textContent='i';k.setAttribute('aria-label','Más información de la mejora '+n);e.prepend(k);e.prepend(b)});$$('[data-imp]').forEach(e=>{e.dataset.o=e.dataset.o||imp(+e.dataset.imp).o})}
 
 /* ---------- Inicio ---------- */
 function vHome(){
@@ -582,7 +593,25 @@ document.addEventListener('change',e=>{const t=e.target,k=t.dataset.ch;if(!k)ret
 document.addEventListener('input',e=>{const t=e.target;if(t.id==='qaIn')qa();if(t.dataset.ch==='cp'){S.cp=t.value;const pos=t.selectionStart;render(true);const n=$('#cp');if(n){n.focus();n.setSelectionRange(pos,pos)}}});
 $('#searchForm').addEventListener('submit',e=>{e.preventDefault();S.q=$('#q').value.trim();S.f={brand:[],type:[],price:'',rating:0,prime:false,amazon:false};go('resultados');if(location.hash==='#resultados')render()});
 $('#tg').addEventListener('change',e=>document.body.classList.toggle('show',e.target.checked));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();$('#accMenu').hidden=true}});
+/* ---------- Globos informativos de las mejoras ---------- */
+const TIP=document.createElement('div');TIP.className='tip';TIP.id='tip';TIP.setAttribute('role','tooltip');TIP.hidden=true;document.body.appendChild(TIP);
+const cut=(s,n)=>{s=String(s||'');return s.length>n?s.slice(0,n-1).trimEnd()+'…':s};
+const hfull=s=>String(s||'').replace(/\bH(\d+)\b/g,'Heurística $1');
+function tipShow(el,n){const i=imp(n);if(!i)return;
+ TIP.innerHTML=`<div class="th"><span class="tn ${i.o}">${i.n}</span><div><b>${i.t}</b><span>${O[i.o]}</span></div></div><div class="tl">Heurística aplicada</div><div>${hfull(i.h)}</div><div class="tl">Qué se mejoró</div><div>${cut(i.d,230)}</div><div class="tl">Problema que atiende</div><div>${cut(i.a,200)}</div><div class="tf">Clic en el número o en «i» para ver el detalle completo.</div>`;
+ TIP.hidden=false;const r=el.getBoundingClientRect(),w=TIP.offsetWidth,hh=TIP.offsetHeight;
+ let x=Math.min(Math.max(8,r.left),window.innerWidth-w-8),y=r.bottom+10;
+ if(y+hh>window.innerHeight-8)y=Math.max(8,r.top-hh-10);
+ TIP.style.left=x+'px';TIP.style.top=y+'px'}
+function tipHide(){TIP.hidden=true}
+function tipTarget(t){if(!t||!t.closest)return null;const k=t.closest('.ibadge,.iinfo');if(k)return{el:k,n:+k.dataset.arg};
+ if(!document.body.classList.contains('show'))return null;const d=t.closest('[data-imp]');return d?{el:d,n:+d.dataset.imp}:null}
+document.addEventListener('mouseover',e=>{const x=tipTarget(e.target);if(x)tipShow(x.el,x.n);else tipHide()});
+document.addEventListener('focusin',e=>{const x=e.target.closest&&e.target.closest('.ibadge,.iinfo');if(x)tipShow(x,+x.dataset.arg)});
+document.addEventListener('focusout',tipHide);
+document.addEventListener('scroll',tipHide,true);
+$('#tg').addEventListener('change',tipHide);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();tipHide();$('#accMenu').hidden=true}});
 const _render=render;render=function(k){_render(k);if(S.route==='resultados')updRes();if(S.route.startsWith('producto-'))qa()};
 window.addEventListener('hashchange',()=>render());
 render();

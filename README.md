@@ -7,7 +7,7 @@ Prototipo web de varias pantallas de Amazon México con las mejoras de usabilida
 ## Pantallas
 Inicio · Resultados con filtros · Ficha de producto · Carrito · Pago en 3 pasos · Confirmación · Mis pedidos con seguimiento · Centro de ayuda · Catálogo de mejoras.
 
-Activa **«Mostrar mejoras propuestas»** para ver cada mejora numerada sobre el diseño; toca un número para ver su detalle.
+Activa **«Mostrar mejoras propuestas»** para ver cada mejora numerada sobre el diseño; pasa el mouse sobre un número, sobre el icono «i» o sobre el elemento resaltado para ver un globo con la mejora, la heurística aplicada y el problema que atiende; haz clic para ver el detalle completo.
 
 ## Origen de las mejoras (17)
 | Mejoras | Origen |
@@ -17,6 +17,9 @@ Activa **«Mostrar mejoras propuestas»** para ver cada mejora numerada sobre el
 | 10–17 | **Adicionales del análisis**: resultados patrocinados etiquetados, reseñas filtrables, progreso del pago, «Comprar ahora» con revisión, accesibilidad básica, barra fija en móvil, errores que ayudan y comparador. |
 
 Son hipótesis de diseño, no resultados de pruebas con usuarios.
+
+## Imagen
+Los productos usan la fotografía de audífonos proporcionada por el equipo (`img/audifonos.png`) como imagen ilustrativa; no corresponde a cada modelo.
 
 ## Datos
 Reales (ficha Sony WH-CH520 observada el 23-nov-2026): precio, fechas de entrega, devolución, usado $591.82, 8 vendedores y planes de protección. El resto (otros productos, vendedores, calificaciones, reseñas, pedidos de ejemplo, costo de envío de vendedores externos, garantía) es **ilustrativo** y está marcado con asterisco o aviso.
