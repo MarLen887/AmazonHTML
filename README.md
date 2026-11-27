@@ -1,27 +1,25 @@
-# Amazon México · Propuesta de rediseño (prototipo funcional)
+# Amazon México · Prototipo de compra para pruebas de usabilidad
 
-Prototipo web de varias pantallas de Amazon México con las mejoras de usabilidad propuestas en el proyecto de **Ingeniería de Usabilidad (Grupo 7C)**.
+Prototipo web de varias pantallas de Amazon México, desarrollado para el proyecto de **Ingeniería de Usabilidad (Grupo 7C)** y preparado para que personas externas lo utilicen sin guía dentro de la interfaz.
 
 **Demo:** https://marlen887.github.io/AmazonHTML/
 
-## Pantallas
-Inicio · Resultados con filtros · Ficha de producto · Carrito · Pago en 3 pasos · Confirmación · Mis pedidos con seguimiento · Centro de ayuda · Catálogo de mejoras.
+## Qué incluye
+- **Inicio** con ofertas, departamentos y productos vistos recientemente.
+- **Departamentos y búsqueda:** Audio y audífonos, Electrónicos, Cómputo, Hogar y cocina, Moda y Videojuegos; además Ofertas del día, Más vendidos, Nuevos lanzamientos y Prime. Menú «Todo» funcional.
+- **Resultados** con filtros, filtros activos, orden y comparador de hasta 3 productos.
+- **Ficha de producto** con envío, cantidad, quién vende y quién envía, devoluciones, garantía, planes de protección, reseñas filtrables y preguntas.
+- **Carrito** con cambio de cantidad, eliminar con «Deshacer» y guardar para después.
+- **Pago en 3 pasos** (dirección con validación, envío y pago, revisión), **«Comprar ahora»** con revisión previa y **confirmación**.
+- **Mis pedidos** con seguimiento por etapas, cancelación (en preparación) y devolución (entregado).
+- **Prime** con condiciones antes de activar y cancelación en 2 pasos.
+- **Centro de ayuda** y ayuda rápida desde la ficha.
+- Tema claro/oscuro, diseño adaptable a móvil y accesibilidad básica (foco visible, etiquetas, «Saltar al contenido»).
 
-Activa **«Mostrar mejoras propuestas»** para ver cada mejora numerada sobre el diseño; pasa el mouse sobre un número, sobre el icono «i» o sobre el elemento resaltado para ver un globo con la mejora, la heurística aplicada y el problema que atiende; haz clic para ver el detalle completo.
+## Notas
+- Las fechas de entrega y de devolución se calculan a partir de la fecha actual.
+- El carrito y los pedidos se conservan mientras la pestaña esté abierta (sessionStorage).
+- Un producto real de referencia (Sony WH-CH520) conserva su precio observado; el resto de productos, vendedores, calificaciones y reseñas son **ficticios**.
+- Los audífonos usan una fotografía proporcionada por el equipo (`img/audifonos.png`); los demás productos usan ilustraciones propias.
 
-## Origen de las mejoras (17)
-| Mejoras | Origen |
-|---|---|
-| 1–3 | **Propuestas de los documentos** (ProyectoUsabilidad y Auditoría): caja de compra sin sobrecarga, envío y Prime sin patrones oscuros, quién vende y quién envía. |
-| 4–9 | **Derivadas de los documentos**: filtros que conservan el contexto, carrito reversible, confirmación y recomendaciones no intrusivas, costo total transparente, seguimiento de pedido, ayuda sin perder la tarea. |
-| 10–17 | **Adicionales del análisis**: resultados patrocinados etiquetados, reseñas filtrables, progreso del pago, «Comprar ahora» con revisión, accesibilidad básica, barra fija en móvil, errores que ayudan y comparador. |
-
-Son hipótesis de diseño, no resultados de pruebas con usuarios.
-
-## Imagen
-Los productos usan la fotografía de audífonos proporcionada por el equipo (`img/audifonos.png`) como imagen ilustrativa; no corresponde a cada modelo.
-
-## Datos
-Reales (ficha Sony WH-CH520 observada el 23-nov-2026): precio, fechas de entrega, devolución, usado $591.82, 8 vendedores y planes de protección. El resto (otros productos, vendedores, calificaciones, reseñas, pedidos de ejemplo, costo de envío de vendedores externos, garantía) es **ilustrativo** y está marcado con asterisco o aviso.
-
-> Proyecto académico. No es el sitio oficial de Amazon México. Ningún cobro, pedido ni suscripción es real.
+> Proyecto académico. No es el sitio oficial de Amazon México. Ningún cobro, pedido ni suscripción es real y no se solicitan datos bancarios.
