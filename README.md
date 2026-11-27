@@ -20,6 +20,6 @@ Prototipo web de varias pantallas de Amazon México, desarrollado para el proyec
 - Las fechas de entrega y de devolución se calculan a partir de la fecha actual.
 - El carrito y los pedidos se conservan mientras la pestaña esté abierta (sessionStorage).
 - Un producto real de referencia (Sony WH-CH520) conserva su precio observado; el resto de productos, vendedores, calificaciones y reseñas son **ficticios**.
-- Los audífonos usan una fotografía proporcionada por el equipo (`img/audifonos.png`); los demás productos usan ilustraciones propias.
+- Las imágenes de producto son fotografías proporcionadas por el equipo (`img/audifonos.png` e `img/p/`). Algunas muestran marcas reales ajenas al prototipo; se usan solo como referencia visual en este proyecto académico.
 
 > Proyecto académico. No es el sitio oficial de Amazon México. Ningún cobro, pedido ni suscripción es real y no se solicitan datos bancarios.

@@ -93,6 +93,7 @@ select,input[type=text],input[type=search]{font:inherit;color:var(--ink);backgro
 .pimg{background:#fff;border-radius:8px;overflow:hidden;position:relative}
 .pimg img,.pimg svg{position:absolute;inset:0;width:100%;height:100%;display:block;padding:7%;box-sizing:border-box}
 .pimg img{object-fit:contain}
+.pimg img.ph{padding:0}
 .stars{color:#b45309;letter-spacing:1px}
 .price{font-variant-numeric:tabular-nums;font-weight:600}
 /* Inicio */
@@ -260,8 +261,8 @@ const RETD=fd(addD(33),{day:'numeric',month:'long',year:'numeric'});
 /* ---------- Catálogo ---------- */
 const DEPT={audio:'Audio y audífonos',electronicos:'Electrónicos',computo:'Cómputo',hogar:'Hogar y cocina',moda:'Moda',videojuegos:'Videojuegos'};
 const TDEPT={ofertas:'Ofertas del día',prime:'Productos con envío Prime',top:'Los más vendidos',new:'Nuevos lanzamientos'};
-const DICON={audio:'hp',electronicos:'tv',computo:'laptop',hogar:'blender',moda:'shoe',videojuegos:'controller'};
-const COLH={Negro:'#1f2937',Azul:'#1e3a8a',Blanco:'#e5e7eb',Rojo:'#b91c1c',Gris:'#6b7280',Verde:'#166534',Plata:'#cbd5e1',Beige:'#d6c3a3'};
+const DREP={audio:'auralis',electronicos:'tv50',computo:'book14',hogar:'blend',moda:'run',videojuegos:'pad'};
+const COLH={Negro:'#1f2937',Azul:'#1e3a8a',Blanco:'#e5e7eb',Rojo:'#b91c1c',Gris:'#6b7280',Verde:'#166534',Plata:'#cbd5e1',Beige:'#d6c3a3',Morado:'#7c6ea8',Naranja:'#ea6a12',Surtido:'#9ca3af','Azul y rojo':'#2563eb','Negro y dorado':'#1f2937'};
 const SELL={amz:{n:'Amazon México',amazon:true,sr:4.7,sp:96},kes:{n:'Kestrel Store MX',amazon:false,sr:4.1,sp:81},ele:{n:'ElectroMarket Puebla',amazon:false,sr:3.6,sp:72},ven:{n:'Vento Oficial',amazon:false,sr:4.6,sp:94},hog:{n:'HogarPlus MX',amazon:false,sr:4.3,sp:88},mod:{n:'ModaCentro',amazon:false,sr:4.4,sp:90}};
 const KT={hp:'audifonos auriculares bluetooth inalambricos diadema',speaker:'bocina altavoz bluetooth parlante',soundbar:'barra sonido bocina televisor',tv:'televisor television pantalla tv smart',tablet:'tableta tablet',phone:'celular telefono smartphone movil',watch:'reloj smartwatch inteligente',cam:'camara vigilancia seguridad',laptop:'computadora portatil laptop notebook',monitor:'pantalla monitor computadora',mouse:'raton mouse inalambrico',keyboard:'teclado mecanico',blender:'licuadora cocina',fryer:'freidora aire cocina',vacuum:'aspiradora robot limpieza',lamp:'lampara escritorio luz',pans:'sartenes cocina antiadherente',shoe:'tenis zapatos calzado correr',backpack:'mochila bolsa',jacket:'chamarra abrigo impermeable',tee:'playera camiseta ropa',controller:'control gamepad videojuegos',handheld:'consola portatil videojuegos',chair:'silla gamer escritorio'};
 const mk=(id,short,name,brand,dept,type,kind,price,list,rating,reviews,prime,sell,feat,x={})=>({id,short,name,brand,dept,type,kind,price,list,rating,reviews,prime,seller:SELL[sell].n,amazon:SELL[sell].amazon,sr:SELL[sell].sr,sp:SELL[sell].sp,feat,...x,cols:(x.cols||['Negro']).map(n=>[n,COLH[n]])});
@@ -277,29 +278,31 @@ const P=[
  mk('boom','Kestrel Boom 20','Kestrel Boom 20 bocina Bluetooth portátil resistente al agua','Kestrel','audio','Bocina','speaker',699,899,4.4,4120,true,'amz',['Resistencia IPX7','Hasta 12 horas de batería','Sonido 360°'],{cols:['Negro','Azul','Rojo']}),
  mk('bar','Tonal Bar 2.1','Tonal Bar 2.1 barra de sonido con subwoofer inalámbrico','Tonal','audio','Barra de sonido','soundbar',2899,3499,4.5,1730,true,'amz',['Subwoofer inalámbrico','Entrada HDMI ARC','Bluetooth 5.0']),
  mk('tv50','Lumen Smart TV 50"','Lumen Smart TV 50 pulgadas 4K UHD con HDR y control por voz','Lumen','electronicos','Pantallas','tv',7499,9299,4.5,3890,true,'amz',['Resolución 4K UHD','3 puertos HDMI','Aplicaciones de streaming integradas'],{nuevo:true,stock:4}),
- mk('tab','Vento Tab 10','Vento Tab 10 tableta de 10.4 pulgadas, 128 GB, Wi-Fi','Vento','electronicos','Tabletas','tablet',4299,0,4.3,1650,true,'ven',['Pantalla de 10.4 pulgadas','128 GB de almacenamiento','Batería de hasta 12 horas'],{cols:['Gris','Azul']}),
- mk('phonex','Nimbo Phone X','Nimbo Phone X smartphone de 6.5 pulgadas, 128 GB, cámara de 50 MP','Nimbo','electronicos','Celulares','phone',5999,6999,4.4,5230,true,'amz',['Pantalla de 6.5 pulgadas','Cámara principal de 50 MP','Carga rápida de 33 W'],{cols:['Negro','Azul','Blanco']}),
- mk('watch','Auralis Watch S2','Auralis Watch S2 smartwatch con GPS y monitor de actividad','Auralis','electronicos','Smartwatch','watch',1899,2399,4.2,2780,true,'amz',['GPS integrado','Resistente al agua 5 ATM','Hasta 7 días de batería'],{cols:['Negro','Plata']}),
- mk('cam','Kestrel Cam Pro','Kestrel Cam Pro cámara de seguridad Wi-Fi 2K con visión nocturna','Kestrel','electronicos','Cámaras','cam',649,0,4.0,910,false,'kes',['Video 2K','Visión nocturna','Detección de movimiento'],{sponsored:true,cols:['Blanco']}),
- mk('book14','Tonal Book 14','Tonal Book 14 laptop de 14 pulgadas, procesador Intel Core i5, 16 GB RAM, 512 GB SSD','Tonal','computo','Laptops','laptop',12999,14999,4.6,2210,true,'amz',['Pantalla Full HD de 14 pulgadas','16 GB de RAM y 512 GB SSD','Hasta 10 horas de batería'],{cols:['Gris','Plata'],stock:6}),
- mk('mon27','Lumen Display 27"','Lumen Display 27 pulgadas monitor QHD de 75 Hz','Lumen','computo','Monitores','monitor',3799,4499,4.5,1420,true,'amz',['Resolución QHD 2560×1440','Panel IPS','Entradas HDMI y DisplayPort']),
- mk('glide','Vento Glide','Vento Glide mouse inalámbrico ergonómico recargable','Vento','computo','Accesorios','mouse',329,0,4.4,6010,true,'ven',['Conexión Bluetooth y receptor USB','Recargable por USB-C','Seis botones programables'],{cols:['Negro','Gris','Blanco']}),
+ mk('tab','Vento Tab 10','Vento Tab 10 tableta de 10.1 pulgadas, 32 GB, Wi-Fi','Vento','electronicos','Tabletas','tablet',2299,0,4.3,1650,true,'ven',['Pantalla de 10.1 pulgadas','32 GB de almacenamiento','Batería de hasta 10 horas']),
+ mk('phonex','Nimbo Phone X','Nimbo Phone X smartphone plegable de 7.6 pulgadas, 256 GB, cámara doble de 50 MP','Nimbo','electronicos','Celulares','phone',5999,6999,4.4,5230,true,'amz',['Pantalla interna de 7.6 pulgadas','Cámara principal de 50 MP','Carga rápida de 25 W'],{cols:['Morado']}),
+ mk('watch','Auralis Watch S2','Auralis Watch S2 smartwatch con GPS y monitor de actividad','Auralis','electronicos','Smartwatch','watch',1899,2399,4.2,2780,true,'amz',['GPS integrado','Resistente al agua 5 ATM','Hasta 7 días de batería'],{cols:['Surtido']}),
+ mk('cam','Kestrel Cam Pro','Kestrel Cam Pro cámara de seguridad Wi-Fi giratoria con visión nocturna (paquete de 2)','Kestrel','electronicos','Cámaras','cam',649,0,4.0,910,false,'kes',['Paquete de 2 cámaras','Visión nocturna','Control desde la app'],{sponsored:true,cols:['Blanco']}),
+ mk('book14','Tonal Book 14','Tonal Book 14 laptop de 14 pulgadas, procesador Intel Core i5, 16 GB RAM, 512 GB SSD','Tonal','computo','Laptops','laptop',12999,14999,4.6,2210,true,'amz',['Pantalla Full HD de 14 pulgadas','16 GB de RAM y 512 GB SSD','Hasta 10 horas de batería'],{cols:['Gris'],stock:6}),
+ mk('mon27','Lumen Curve 34"','Lumen Curve 34 pulgadas monitor curvo UWQHD de 180 Hz','Lumen','computo','Monitores','monitor',5499,6499,4.5,1420,true,'amz',['Resolución UWQHD 3440×1440','180 Hz y tiempo de respuesta de 1 ms','Panel curvo con iluminación RGB']),
+ mk('glide','Vento Glide','Vento Glide mouse inalámbrico gamer recargable con iluminación LED','Vento','computo','Accesorios','mouse',329,0,4.4,6010,true,'ven',['Receptor USB inalámbrico','Batería recargable','Iluminación LED y botones programables'],{cols:['Blanco']}),
  mk('k1','Kestrel K1','Kestrel K1 teclado mecánico compacto con retroiluminación','Kestrel','computo','Accesorios','keyboard',899,0,4.3,1730,false,'kes',['Switches mecánicos','Retroiluminación RGB','Cable USB-C desmontable'],{nuevo:true}),
- mk('blend','Nimbo Blend','Nimbo Blend licuadora de 1.5 litros con vaso de vidrio','Nimbo','hogar','Cocina','blender',899,1199,4.3,3400,true,'amz',['Motor de 700 W','Vaso de vidrio de 1.5 L','Cuatro velocidades'],{cols:['Negro','Rojo']}),
+ mk('blend','Nimbo Blend','Nimbo Blend licuadora de 1.5 litros con vaso de vidrio','Nimbo','hogar','Cocina','blender',899,1199,4.3,3400,true,'amz',['Motor de 700 W','Vaso de vidrio de 1.5 L','Cuatro velocidades'],{cols:['Rojo']}),
  mk('chef','Auralis Chef 4L','Auralis Chef freidora de aire de 4 litros con panel digital','Auralis','hogar','Cocina','fryer',1599,1999,4.6,8420,true,'amz',['Capacidad de 4 litros','Ocho programas preestablecidos','Canasta antiadherente lavable'],{stock:3}),
  mk('clean','Lumen Clean','Lumen Clean aspiradora robot con mapeo y control por app','Lumen','hogar','Limpieza','vacuum',3499,0,4.2,2150,true,'amz',['Mapeo inteligente','Hasta 120 minutos de autonomía','Control desde la app']),
- mk('lux','Vento Lux','Vento Lux lámpara LED de escritorio regulable','Vento','hogar','Iluminación','lamp',349,0,4.4,1260,true,'ven',['Tres temperaturas de luz','Brazo articulado','Puerto de carga USB'],{cols:['Negro','Blanco']}),
- mk('cook','Kestrel Cook','Kestrel Cook juego de 3 sartenes antiadherentes','Kestrel','hogar','Cocina','pans',699,0,4.1,980,false,'hog',['Tres tamaños','Compatible con estufa de gas y eléctrica','Mango resistente al calor']),
- mk('run','Vento Run','Vento Run tenis de running ligeros para hombre y mujer','Vento','moda','Calzado','shoe',1199,1499,4.4,5030,true,'ven',['Suela con amortiguación','Malla transpirable','Peso ligero'],{cols:['Negro','Azul','Blanco']}),
- mk('pack','Nimbo Pack 25L','Nimbo Pack mochila urbana de 25 litros con compartimento para laptop','Nimbo','moda','Accesorios','backpack',549,0,4.5,3120,true,'mod',['Capacidad de 25 L','Compartimento acolchado para laptop de 15"','Material repelente al agua'],{cols:['Negro','Verde','Gris']}),
- mk('wear','Auralis Wear','Auralis Wear chamarra impermeable ligera con capucha','Auralis','moda','Ropa','jacket',1299,0,4.3,1210,true,'amz',['Tela impermeable','Capucha ajustable','Bolsillos con cierre'],{cols:['Azul','Negro','Verde']}),
- mk('move','Kestrel Move','Kestrel Move playera deportiva de secado rápido','Kestrel','moda','Ropa','tee',249,0,4.0,2340,false,'mod',['Tela de secado rápido','Costuras planas','Corte regular'],{cols:['Negro','Azul','Rojo','Gris']}),
- mk('pad','Kestrel Pad','Kestrel Pad control inalámbrico para consola y PC','Kestrel','videojuegos','Accesorios','controller',899,0,4.5,7010,true,'amz',['Conexión inalámbrica','Vibración háptica','Hasta 20 horas de batería'],{cols:['Negro','Blanco','Azul']}),
- mk('go','Lumen Go','Lumen Go consola portátil con pantalla de 7 pulgadas, 64 GB','Lumen','videojuegos','Consolas','handheld',4999,0,4.4,1980,true,'amz',['Pantalla de 7 pulgadas','64 GB de almacenamiento','Hasta 6 horas de juego'],{nuevo:true}),
- mk('seat','Tonal Seat','Tonal Seat silla gamer ergonómica con soporte lumbar','Tonal','videojuegos','Muebles','chair',3299,3999,4.2,860,false,'hog',['Respaldo reclinable','Soporte lumbar ajustable','Base de acero'],{cols:['Negro','Rojo']}),
+ mk('lux','Vento Lux','Vento Lux lámpara de mesa de cerámica con pantalla de tela','Vento','hogar','Iluminación','lamp',349,0,4.4,1260,true,'ven',['Base de cerámica','Pantalla de tela','Foco E27 (no incluido)'],{cols:['Blanco']}),
+ mk('cook','Kestrel Cook','Kestrel Cook juego de 3 sartenes antiadherentes','Kestrel','hogar','Cocina','pans',699,0,4.1,980,false,'hog',['Tres tamaños','Compatible con estufa de gas y eléctrica','Mango resistente al calor'],{cols:['Naranja']}),
+ mk('run','Vento Street','Vento Street tenis casuales blancos con suela de plataforma','Vento','moda','Calzado','shoe',1199,1499,4.4,5030,true,'ven',['Piel sintética','Suela de plataforma','Cierre con agujetas'],{cols:['Blanco']}),
+ mk('pack','Nimbo Pack 25L','Nimbo Pack mochila urbana de 25 litros con compartimento para laptop','Nimbo','moda','Accesorios','backpack',549,0,4.5,3120,true,'mod',['Capacidad de 25 L','Compartimento acolchado para laptop de 15"','Material repelente al agua']),
+ mk('wear','Auralis Wear','Auralis Wear chamarra de forro polar con cierre completo','Auralis','moda','Ropa','jacket',1299,0,4.3,1210,true,'amz',['Forro polar suave','Cierre completo','Bolsillo con cierre']),
+ mk('move','Kestrel Move (3 pzas)','Kestrel Move paquete de 3 playeras de algodón','Kestrel','moda','Ropa','tee',449,0,4.0,2340,false,'mod',['Paquete de 3 piezas','Algodón suave','Corte regular'],{cols:['Surtido']}),
+ mk('pad','Kestrel Pad','Kestrel Pad control inalámbrico para consola y PC','Kestrel','videojuegos','Accesorios','controller',899,0,4.5,7010,true,'amz',['Conexión inalámbrica','Vibración háptica','Hasta 20 horas de batería'],{cols:['Blanco']}),
+ mk('go','Lumen Go','Lumen Go consola portátil con pantalla de 4.3 pulgadas y juegos integrados','Lumen','videojuegos','Consolas','handheld',649,0,4.1,1980,true,'amz',['Pantalla de 4.3 pulgadas','Incluye cable AV, audífonos y tarjeta de 8 GB','Juegos clásicos integrados'],{nuevo:true,cols:['Azul y rojo']}),
+ mk('seat','Tonal Seat','Tonal Seat silla gamer ergonómica con reposapiés y cojines lumbar y cervical','Tonal','videojuegos','Muebles','chair',3299,3999,4.2,860,false,'hog',['Respaldo reclinable','Reposapiés retráctil','Cojines lumbar y cervical'],{cols:['Negro y dorado']}),
  mk('arena','Vento Arena','Vento Arena audífonos gamer over-ear con micrófono','Vento','videojuegos','Audífonos','hp',799,0,4.3,2210,true,'ven',['Micrófono con cancelación de ruido','Conexión USB y 3.5 mm','Almohadillas de espuma'])
 ];
+const IMGM={"boom": ["#ffffff", 0.794], "bar": ["#ffffff", 1.0], "tv50": ["#ffffff", 1.0], "tab": ["#fbfbfb", 1.782], "watch": ["#fafafa", 1.042], "cam": ["#ffffff", 0.991], "book14": ["#ffffff", 0.774], "phonex": ["#5d5b7d", 0.845], "mon27": ["#ffffff", 1.0], "glide": ["#ffffff", 1.027], "k1": ["#0d070a", 1.509], "blend": ["#dad2ca", 1.0], "chef": ["#cececb", 1.0], "clean": ["#ddd2cd", 1.5], "lux": ["#a19a95", 1.248], "cook": ["#c09f80", 1.0], "run": ["#ffffff", 1.0], "pack": ["#ededeb", 0.801], "wear": ["#fefefe", 0.893], "move": ["#ebe9ec", 0.793], "pad": ["#ffffff", 1.0], "go": ["#ffffff", 1.111], "seat": ["#3e4875", 1.0]};
 const pid=id=>P.find(p=>p.id===id);
+P.forEach(p=>{const m=IMGM[p.id];if(m){p.img='img/p/'+p.id+'.jpg';p.bg=m[0];p.fit=m[1]>=.85&&m[1]<=1.3?'cover':'contain'}});
 P.forEach(p=>{p._h=norm([p.name,p.brand,p.type,DEPT[p.dept],KT[p.kind]].join(' '))});
 const shipCost=p=>p.amazon?0:EXT_SHIP;
 const PLAN={0:{n:'Sin plan de protección',p:0},2:{n:'Protección 2 años',p:105.91},3:{n:'Protección 3 años',p:135.80},4:{n:'Protección 4 años',p:163.71}};
@@ -342,7 +345,8 @@ handheld:c=>`<rect x="14" y="52" width="172" height="76" rx="20" fill="${c}"/><r
 chair:c=>`<rect x="62" y="10" width="76" height="82" rx="22" fill="${c}"/><rect x="72" y="24" width="56" height="30" rx="10" fill="#0f172a" fill-opacity=".35"/><rect x="56" y="94" width="88" height="22" rx="10" fill="${c}"/><rect x="96" y="116" width="8" height="30" fill="#6b7280"/><path d="M56 160l44-14 44 14" stroke="#6b7280" stroke-width="7" stroke-linecap="round" fill="none"/><path d="M46 96h14v18H46z M140 96h14v18h-14z" fill="#374151"/>`
 };
 const art=(k,c,label)=>k==='hp'?`<img src="img/audifonos.png" width="893" height="1000" alt="${esc(label||'Audífonos')}" loading="lazy" decoding="async">`:`<svg viewBox="0 0 200 180" role="img" aria-label="${esc(label||'Producto')}">${ART[k](c||'#374151')}</svg>`;
-const pic=(p,ci=0)=>art(p.kind,(p.cols[ci]||p.cols[0])[1],p.short);
+const pic=(p,ci=0)=>p.img?`<img class="ph" src="${p.img}" alt="${esc(p.short)}" style="object-fit:${p.fit}" loading="lazy" decoding="async">`:art(p.kind,(p.cols[ci]||p.cols[0])[1],p.short);
+const pimg=(p,ci=0)=>`<div class="pimg"${p.bg?` style="background:${p.bg}"`:''}>${pic(p,ci)}</div>`;
 const stars=r=>'★'.repeat(Math.round(r))+'☆'.repeat(5-Math.round(r));
 /* ---------- Estado ---------- */
 const S={q:'',dept:'',lastDept:null,f:{brand:[],type:[],price:'',rating:0,prime:false,amazon:false},sort:'rel',cmp:[],
@@ -395,16 +399,16 @@ function render(keepScroll){
 function refreshHdr(){$('#cartN').textContent=count();$('#mPrime').disabled=!S.prime;$('#mPrimeS').textContent=S.prime?'(activo)':'(no activo)'}
 /* ---------- Tarjetas de producto ---------- */
 const disc=p=>p.list?Math.round((1-p.price/p.list)*100):0;
-const pc=p=>`<a class="pc" data-act="go" data-arg="producto-${p.id}" href="#producto-${p.id}"><div class="pimg">${pic(p)}</div>${p.list?`<span class="disc">-${disc(p)} %</span>`:''}<h3>${esc(p.short)}</h3><div class="fine"><span class="stars">${stars(p.rating)}</span> ${p.reviews.toLocaleString('es-MX')}</div><div class="price">${money(p.price)}${p.list?` <s class="fine">${money(p.list)}</s>`:''}</div>${p.prime?'<span class="chip ok">✓ Prime</span>':''}</a>`;
+const pc=p=>`<a class="pc" data-act="go" data-arg="producto-${p.id}" href="#producto-${p.id}">${pimg(p)}${p.list?`<span class="disc">-${disc(p)} %</span>`:''}<h3>${esc(p.short)}</h3><div class="fine"><span class="stars">${stars(p.rating)}</span> ${p.reviews.toLocaleString('es-MX')}</div><div class="price">${money(p.price)}${p.list?` <s class="fine">${money(p.list)}</s>`:''}</div>${p.prime?'<span class="chip ok">✓ Prime</span>':''}</a>`;
 const row=(t,l,act)=>`<section class="shelf"><div class="shead"><h2>${t}</h2><button class="link" data-act="go" data-arg="${act}">Ver todo</button></div><div class="pcs">${l.map(pc).join('')}</div></section>`;
 /* ---------- Inicio ---------- */
 function vHome(){
  const rec=S.recent.map(pid).filter(Boolean).slice(0,6);
  const deals=P.filter(p=>p.list).sort((a,b)=>disc(b)-disc(a)).slice(0,6);
  return `<section class="hero2"><div class="l"><span class="chip">Ofertas de temporada</span><h1>Tecnología, hogar y moda con envío rápido</h1><p>Descubre las ofertas del día con descuentos de hasta ${Math.max(...P.map(disc))} %.</p><div class="row"><button class="btn primary sm" data-act="go" data-arg="depto-ofertas">Ver ofertas del día</button><button class="btn sm" style="background:transparent;border-color:#fff;color:#fff" data-act="go" data-arg="depto-top">Los más vendidos</button></div></div>
- <div class="r">${['auralis','tv50','chef'].map(i=>`<div class="pimg">${pic(pid(i))}</div>`).join('')}</div></section>
+ <div class="r">${['auralis','tv50','chef'].map(i=>`${pimg(pid(i))}`).join('')}</div></section>
  <h2>Comprar por departamento</h2>
- <div class="dgrid">${Object.entries(DEPT).map(([k,v])=>`<button class="dtile" data-act="go" data-arg="depto-${k}"><div class="pimg">${art(DICON[k],'#374151',v)}</div><b>${v}</b></button>`).join('')}</div>
+ <div class="dgrid">${Object.entries(DEPT).map(([k,v])=>`<button class="dtile" data-act="go" data-arg="depto-${k}">${pimg(pid(DREP[k]))}<b>${v}</b></button>`).join('')}</div>
  ${row('Ofertas del día',deals,'depto-ofertas')}
  ${rec.length?`<section class="shelf"><div class="shead"><h2>Vistos recientemente</h2></div><div class="pcs">${rec.map(pc).join('')}</div></section>`:''}
  ${row('Más vendidos en Audio y audífonos',P.filter(p=>p.dept==='audio').sort((a,b)=>b.reviews-a.reviews).slice(0,6),'depto-audio')}
@@ -432,7 +436,7 @@ const PR={a:'Menos de $500',b:'$500 a $1,000',c:'$1,000 a $2,000',d:'Más de $2,
 function chipsHtml(){const f=S.f,c=[];f.brand.forEach(b=>c.push(['brand:'+b,'Marca: '+b]));f.type.forEach(b=>c.push(['type:'+b,'Tipo: '+b]));if(f.price)c.push(['price','Precio: '+PR[f.price]]);if(f.rating)c.push(['rating',f.rating+' estrellas o más']);if(f.prime)c.push(['prime','Envío Prime']);if(f.amazon)c.push(['amazon','Vendido por Amazon México']);
  return c.length?c.map(x=>`<button class="chip x" data-act="rmf" data-arg="${esc(x[0])}" aria-label="Quitar filtro ${esc(x[1])}">${esc(x[1])} ×</button>`).join('')+`<button class="link" data-act="clearF">Limpiar todo</button>`:'<span class="fine">Sin filtros activos</span>'}
 function cardHtml(p){const lst=p.list?`<span class="fine">Precio de lista: <s>${money(p.list)}</s> · Ahorras ${disc(p)} %</span>`:'';
- return `<article class="rc"><div class="pimg">${pic(p)}</div><div class="meta">
+ return `<article class="rc">${pimg(p)}<div class="meta">
  ${p.sponsored?'<span class="chip spon">Patrocinado</span>':''}
  <h3><a data-act="go" data-arg="producto-${p.id}" href="#producto-${p.id}">${esc(p.name)}</a></h3>
  <div class="fine"><span class="stars">${stars(p.rating)}</span> ${p.rating} · ${p.reviews.toLocaleString('es-MX')} calificaciones</div>
@@ -478,7 +482,7 @@ function vProd(id){const p=pid(id);S.recent=[id,...S.recent.filter(x=>x!==id)].s
  const stock=p.stock?`<div class="warn">Solo quedan ${p.stock} en existencia</div>`:'<div class="ok" style="font-size:16px">Disponible</div>';
  return `<div class="crumbs"><button class="link" data-act="back">← Volver</button> · <a data-act="go" data-arg="inicio" href="#inicio">Inicio</a> › <a data-act="go" data-arg="depto-${p.dept}" href="#depto-${p.dept}">${DEPT[p.dept]}</a> › ${esc(p.short)}</div>${added}
  <div class="product">
- <section class="gal"><div class="pimg">${pic(p,S.pr.color)}</div></section>
+ <section class="gal">${pimg(p,S.pr.color)}</section>
  <section class="info"><h1>${esc(p.name)}</h1><p class="rate"><span class="stars">${stars(p.rating)}</span> ${p.rating} · <a href="#resenas" data-act="toRev">${p.reviews.toLocaleString('es-MX')} calificaciones</a></p><hr>
   <div class="price big-price">${money(p.price)}</div>${p.list?`<div class="fine">Precio de lista: <s>${money(p.list)}</s> · Ahorras ${disc(p)} %</div>`:''}
   ${p.cols.length>1?`<div class="lbl" style="margin-top:12px">Color: ${c[0]}</div><div class="swatches" role="group" aria-label="Color">${p.cols.map((x,i)=>`<button class="sw2" data-k="c${i}" data-act="color" data-arg="${i}" style="background:${x[1]}" aria-label="${x[0]}" aria-pressed="${i===S.pr.color}"></button>`).join('')}</div>`:`<div class="lbl" style="margin-top:12px">Color: ${c[0]}</div>`}
@@ -508,8 +512,8 @@ function addLine(item){const l=S.cart.find(x=>x.pid===item.pid&&x.plan===item.pl
 function needPrime(){if(S.ship==='prime'&&pid(S.pr.id).prime&&!S.prime){toast('Para usar envío Prime, revisa y activa Prime, o elige envío estándar.');return true}return false}
 /* ---------- Carrito ---------- */
 function vCart(){const d=dets(S.cart,S.ship);
- const lines=S.cart.map((l,i)=>{const p=pid(l.pid);return `<div class="line"><div class="pimg">${pic(p,l.color)}</div><div><b><a data-act="go" data-arg="producto-${p.id}" href="#producto-${p.id}">${esc(p.short)}</a></b><small>Color: ${p.cols[l.color][0]}${l.plan?' · '+PLAN[l.plan].n:''}</small><small>Vendido por ${esc(p.seller)}</small><div class="acts"><div class="step"><button data-k="m${i}" data-act="cq" data-arg="${i}:-1" aria-label="Disminuir">−</button><output>${l.qty}</output><button data-k="p${i}" data-act="cq" data-arg="${i}:1" aria-label="Aumentar" ${l.qty>=MAXQ?'disabled':''}>+</button></div><button class="link" data-act="rm" data-arg="${i}">Eliminar</button><button class="link" data-act="save" data-arg="${i}">Guardar para después</button></div></div><div class="price">${money((p.price+planPrice(p,l.plan))*l.qty)}</div></div>`}).join('');
- const sv=S.saved.length?`<h2 style="margin-top:24px">Guardados para después</h2>${S.saved.map((l,i)=>`<div class="line"><div class="pimg">${pic(pid(l.pid),l.color)}</div><div><b>${esc(pid(l.pid).short)}</b><div class="acts"><button class="link" data-act="unsave" data-arg="${i}">Mover al carrito</button></div></div><div class="price">${money(pid(l.pid).price)}</div></div>`).join('')}`:'';
+ const lines=S.cart.map((l,i)=>{const p=pid(l.pid);return `<div class="line">${pimg(p,l.color)}<div><b><a data-act="go" data-arg="producto-${p.id}" href="#producto-${p.id}">${esc(p.short)}</a></b><small>Color: ${p.cols[l.color][0]}${l.plan?' · '+PLAN[l.plan].n:''}</small><small>Vendido por ${esc(p.seller)}</small><div class="acts"><div class="step"><button data-k="m${i}" data-act="cq" data-arg="${i}:-1" aria-label="Disminuir">−</button><output>${l.qty}</output><button data-k="p${i}" data-act="cq" data-arg="${i}:1" aria-label="Aumentar" ${l.qty>=MAXQ?'disabled':''}>+</button></div><button class="link" data-act="rm" data-arg="${i}">Eliminar</button><button class="link" data-act="save" data-arg="${i}">Guardar para después</button></div></div><div class="price">${money((p.price+planPrice(p,l.plan))*l.qty)}</div></div>`}).join('');
+ const sv=S.saved.length?`<h2 style="margin-top:24px">Guardados para después</h2>${S.saved.map((l,i)=>`<div class="line">${pimg(pid(l.pid),l.color)}<div><b>${esc(pid(l.pid).short)}</b><div class="acts"><button class="link" data-act="unsave" data-arg="${i}">Mover al carrito</button></div></div><div class="price">${money(pid(l.pid).price)}</div></div>`).join('')}`:'';
  return `<div class="crumbs"><button class="link" data-act="back">← Seguir comprando</button></div><h1>Tu carrito</h1>
  ${S.cart.length?`<div class="cols"><section>${lines}${sv}</section><aside class="card"><div class="tot">${tot(d)}</div>${d.notes.map(n=>`<span class="fine">${esc(n)}</span>`).join('')}<button class="btn primary" data-act="checkout">Proceder al pago</button></aside></div>`
  :`<div class="empty"><b>Tu carrito está vacío.</b><span>Agrega productos desde los resultados.</span><button class="btn primary sm" data-act="go" data-arg="inicio">Ir al inicio</button></div>${sv}`}`}
